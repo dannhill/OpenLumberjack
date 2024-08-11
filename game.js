@@ -12,18 +12,21 @@ const GREEN = "rgb(0, 255, 0)";
 const BROWN = "rgb(139, 69, 19)";
 
 // Variabili di gioco
-let player_x = WIDTH / 2;
-let player_y = HEIGHT - 50;
-let player_width = WIDTH / 10;
-let player_height = HEIGHT / 12;
-let tree_width = WIDTH / 20;
-let branch_height = HEIGHT / 12;
+const player_width = WIDTH / 10;
+const player_height = HEIGHT / 12;
+const tree_width = WIDTH / 20;
+const branch_height = HEIGHT / 12;
+const branch_width = player_width;
 let score = 0;
 let timer = 10;
 let max_timer = 10;
 let game_started = false;
 let game_over = false;
 const num_branches = Math.floor(HEIGHT / branch_height);
+const P_LEFT = WIDTH / 2 - tree_width / 2 - player_width / 2
+const P_RIGHT = WIDTH / 2 + tree_width / 2 + player_width / 2
+let player_x = P_RIGHT;
+let player_y = HEIGHT - 50;
 
 let branches = [];
 
@@ -31,45 +34,22 @@ let branches = [];
 function generate_branch(type = null) {
     const sides = ["left", "right", "none"];
     const side = type ? type : sides[Math.floor(Math.random() * sides.length)];
-    return { side: side, y: -branch_height };
+    return { side: side, y: 0 };
 }
-
-window.addEventListener('resize', function() {
-    // Ricalcola le dimensioni della finestra
-    const WIDTH = window.innerWidth;
-    const HEIGHT = window.innerHeight;
-
-    // Aggiorna le variabili dipendenti
-    player_x = WIDTH / 2;
-    player_y = HEIGHT - 50;
-    player_width = WIDTH / 10;
-    player_height = HEIGHT / 12;
-    tree_width = WIDTH / 20;
-    branch_height = HEIGHT / 12;
-    num_branches = Math.floor(HEIGHT / branch_height);
-
-    // Ricalcola la posizione dei rami
-    branches = [];
-    generate_first_branches();
-
-    // Aggiorna il canvas
-    ctx.canvas.width = WIDTH;
-    ctx.canvas.height = HEIGHT;
-});
 
 // Genera i primi rami
 function generate_first_branches() {
-    for (let i = 0; i < num_branches - 2; i++) {
-        branches.push(generate_branch());
+    for (let i = 0; i < num_branches; i++) {
+        if (i < num_branches - 2) {
+            branches.push(generate_branch());
+        }
+        else {
+            branches.push(generate_branch("none"));
+        }
         branches[branches.length - 1].y = i * branch_height;
-    }
-    for (let i = 0; i < 2; i++) {
-        branches.push(generate_branch("none"));
-        branches[branches.length - 1].y = (num_branches - 2) * branch_height + i * branch_height;
     }
 }
 
-window.dispatchEvent(new Event('resize'));
 generate_first_branches();
 
 // Gestione degli input
@@ -108,7 +88,7 @@ function handleMouseDown(event) {
 }
 
 function movePlayer(direction) {
-    player_x = direction === 'left' ? WIDTH / 4 : 3 * WIDTH / 4;
+    player_x = (direction === 'left' ? P_LEFT : P_RIGHT);
     moveBranchesDown();
     score++;
     timer = max_timer;
@@ -116,6 +96,8 @@ function movePlayer(direction) {
 
 function moveBranchesDown() {
     branches.forEach(branch => branch.y += branch_height);
+    pop_push_new_branch();
+    
 }
 
 function startGame() {
@@ -134,6 +116,11 @@ function restartGame() {
     generate_first_branches();
 }
 
+function pop_push_new_branch() {
+    branches.pop();
+    branches.unshift(generate_branch());
+}
+
 function update() {
     if (game_started && !game_over) {
         // Aggiorna il timer
@@ -145,16 +132,10 @@ function update() {
         // Aggiorna il valore massimo del timer
         max_timer = Math.max(10 - score * 0.02, 1);
 
-        // Controllo collisione e aggiunta nuovo ramo
-        if (branches[branches.length - 1].y >= HEIGHT) {
-            branches.pop();
-            branches.unshift(generate_branch());
-        }
-
         // Controllo collisione con il giocatore
         if (branches[branches.length - 1].y + branch_height > player_y) {
-            if ((branches[branches.length - 1].side === "left" && player_x < WIDTH / 2) ||
-                (branches[branches.length - 1].side === "right" && player_x > WIDTH / 2)) {
+            if ((branches[branches.length - 1].side === "left" && player_x === P_LEFT) ||
+                (branches[branches.length - 1].side === "right" && player_x === P_RIGHT)) {
                 game_over = true;
             }
         }
@@ -187,10 +168,13 @@ function draw() {
         // Disegna i rami
         ctx.fillStyle = GREEN;
         branches.forEach(branch => {
-            if (branch.side === "left") {
-                ctx.fillRect(WIDTH / 2 - tree_width / 2 - branch_height, branch.y, branch_height, branch_height);
+            if (branch === branches[branches.length - 1]){
+                return;
+            }
+            else if (branch.side === "left") {
+                ctx.fillRect(WIDTH / 2 - tree_width / 2 - branch_width, branch.y, branch_width, branch_height);
             } else if (branch.side === "right") {
-                ctx.fillRect(WIDTH / 2 + tree_width / 2, branch.y, branch_height, branch_height);
+                ctx.fillRect(WIDTH / 2 + tree_width / 2, branch.y, branch_width, branch_height);
             }
         });
 
