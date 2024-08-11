@@ -15,9 +15,9 @@ const BROWN = "rgb(139, 69, 19)";
 let player_x = WIDTH / 2;
 const player_y = HEIGHT - 50;
 const player_width = 40;
-const player_height = 40;
+const player_height = 50;
 const tree_width = 20;
-const branch_height = 30;
+const branch_height = 50;
 let score = 0;
 let timer = 10;
 let max_timer = 10;
@@ -135,6 +135,8 @@ function update() {
 }
 
 function draw() {
+    ctx.canvas.width = window.innerWidth;
+    ctx.canvas.height = window.innerHeight;
     ctx.fillStyle = WHITE;
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
