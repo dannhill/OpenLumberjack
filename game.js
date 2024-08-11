@@ -1,8 +1,8 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-const WIDTH = 400;
-const HEIGHT = 600;
+const WIDTH = window.innerWidth;
+const HEIGHT = window.innerHeight;
 
 // Colori
 const WHITE = "rgb(255, 255, 255)";
@@ -53,17 +53,17 @@ document.addEventListener('keydown', handleKeyDown);
 canvas.addEventListener('mousedown', handleMouseDown);
 
 function handleKeyDown(event) {
-    if (!game_started) {
+    if (!game_started && !game_over) {
         if (event.code === 'Space') {
             startGame();
         }
-    } else if (!game_over) {
+    } else if (game_started && !game_over) {
         if (event.code === 'ArrowLeft') {
             movePlayer('left');
         } else if (event.code === 'ArrowRight') {
             movePlayer('right');
         }
-    } else {
+    } else if (game_over) {
         if (event.code === 'Space') {
             restartGame();
         }
@@ -71,9 +71,12 @@ function handleKeyDown(event) {
 }
 
 function handleMouseDown(event) {
-    if (!game_started || game_over) {
+    if (!game_started && !game_over) {
         startGame();
-    } else {
+    } else if (game_over){
+        restartGame();
+    } 
+    else {
         const rect = canvas.getBoundingClientRect();
         const x = event.clientX - rect.left;
         movePlayer(x < WIDTH / 2 ? 'left' : 'right');
@@ -135,8 +138,8 @@ function update() {
 }
 
 function draw() {
-    ctx.canvas.width = window.innerWidth;
-    ctx.canvas.height = window.innerHeight;
+    ctx.canvas.width = WIDTH;
+    ctx.canvas.height = HEIGHT;
     ctx.fillStyle = WHITE;
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
