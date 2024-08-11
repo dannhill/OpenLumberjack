@@ -149,8 +149,9 @@ function draw() {
         ctx.fillStyle = BLACK;
         ctx.font = "36px Arial";
         ctx.textAlign = "center";
-        ctx.fillText(`Game Over! Punteggio: ${score}`, WIDTH / 2, HEIGHT / 2);
-        ctx.fillText("Premi per ricominciare", WIDTH / 2, HEIGHT / 2 + 40);
+        ctx.fillText("Game Over!", WIDTH / 2, HEIGHT / 2);
+        ctx.fillText(`Punteggio: ${score}`, WIDTH / 2, HEIGHT / 2 + 40);
+        ctx.fillText("Premi per ricominciare", WIDTH / 2, HEIGHT / 2 + 80);
     } else {
         // Disegna l'albero
         ctx.fillStyle = BROWN;
