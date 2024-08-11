@@ -13,11 +13,11 @@ const BROWN = "rgb(139, 69, 19)";
 
 // Variabili di gioco
 let player_x = WIDTH / 2;
-const player_y = HEIGHT - 50;
-const player_width = 40;
-const player_height = 50;
-const tree_width = 20;
-const branch_height = 50;
+let player_y = HEIGHT - 50;
+let player_width = WIDTH / 10;
+let player_height = HEIGHT / 12;
+let tree_width = WIDTH / 20;
+let branch_height = HEIGHT / 12;
 let score = 0;
 let timer = 10;
 let max_timer = 10;
@@ -34,6 +34,29 @@ function generate_branch(type = null) {
     return { side: side, y: -branch_height };
 }
 
+window.addEventListener('resize', function() {
+    // Ricalcola le dimensioni della finestra
+    const WIDTH = window.innerWidth;
+    const HEIGHT = window.innerHeight;
+
+    // Aggiorna le variabili dipendenti
+    player_x = WIDTH / 2;
+    player_y = HEIGHT - 50;
+    player_width = WIDTH / 10;
+    player_height = HEIGHT / 12;
+    tree_width = WIDTH / 20;
+    branch_height = HEIGHT / 12;
+    num_branches = Math.floor(HEIGHT / branch_height);
+
+    // Ricalcola la posizione dei rami
+    branches = [];
+    generate_first_branches();
+
+    // Aggiorna il canvas
+    ctx.canvas.width = WIDTH;
+    ctx.canvas.height = HEIGHT;
+});
+
 // Genera i primi rami
 function generate_first_branches() {
     for (let i = 0; i < num_branches - 2; i++) {
@@ -46,6 +69,7 @@ function generate_first_branches() {
     }
 }
 
+window.dispatchEvent(new Event('resize'));
 generate_first_branches();
 
 // Gestione degli input
