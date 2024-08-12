@@ -6,9 +6,9 @@ document.addEventListener("DOMContentLoaded", function() {
     const initDataRaw = Telegram.WebApp.initData;
     const initDataObj = parseInitData(initDataRaw);
     
-    const userId = initDataObj.user.id;
-    const chatId = initDataObj.chat?.id;  // `chat_id` potrebbe non essere presente in alcuni casi
-    const messageId = initDataObj.message?.message_id;
+    userId = initDataObj.user.id;
+    chatId = initDataObj.chat?.id;  // `chat_id` potrebbe non essere presente in alcuni casi
+    messageId = initDataObj.message?.message_id;
     
     console.log("User ID:", userId);
     console.log("Chat ID:", chatId);
