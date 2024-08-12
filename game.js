@@ -240,7 +240,7 @@ function draw() {
         ctx.font = "36px Arial";
         ctx.textAlign = "left";
         ctx.fillText(`Punteggio: ${score}`, 10, 40);
-        ctx.fillText(`Record: ${max_score}`, 10, 100);
+        ctx.fillText(`Record: ${userId}`, 10, 100);
 
         // Disegna il timer
         ctx.strokeStyle = BLACK;
