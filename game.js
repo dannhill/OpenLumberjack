@@ -36,6 +36,7 @@ const player_height = HEIGHT / 12;
 const tree_width = WIDTH / 20;
 const branch_height = HEIGHT / 12;
 const branch_width = player_width;
+let sent = false;
 let score = 0;
 let timer = 10;
 let max_timer = 10;
@@ -128,6 +129,7 @@ function startGame() {
 function restartGame() {
     game_started = true;
     game_over = false;
+	sent = false;
     max_timer = 10;
     timer = max_timer;
     score = 0;
@@ -159,7 +161,7 @@ function update() {
             }
         }
     }
-	else if (game_over) {
+	else if (game_over && !sent) {
 		// Dati che vuoi inviare
 		const data = {
 			user_id: userId,         // Sostituisci con il vero user_id
@@ -183,7 +185,7 @@ function update() {
 		.catch((error) => {
 			console.error('Error:', error);
 		});
-
+		sent = true;
 	}
 }
 
