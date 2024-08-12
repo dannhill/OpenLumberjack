@@ -38,6 +38,7 @@ const branch_height = HEIGHT / 12;
 const branch_width = player_width;
 let sent = false;
 let score = 0;
+let max_score = 0;
 let timer = 10;
 let max_timer = 10;
 let game_started = false;
@@ -111,6 +112,9 @@ function movePlayer(direction) {
     player_x = (direction === 'left' ? P_LEFT : P_RIGHT);
     moveBranchesDown();
     score++;
+    
+    if (max_score < score) max_score = score;
+
     timer = max_timer;
 }
 
@@ -166,6 +170,7 @@ function update() {
 		const data = {
 			user_id: userId,         // Sostituisci con il vero user_id
 			score: score,             // Il punteggio ottenuto dal giocatore
+            max_score: max_score,    // Il massimo punteggio ottenuto dal giocatore
 			chat_id: chatId,         // Sostituisci con il vero chat_id, se disponibile
 			message_id: messageId       // Sostituisci con il vero message_id, se disponibile
 		};
@@ -206,7 +211,8 @@ function draw() {
         ctx.textAlign = "center";
         ctx.fillText("Game Over!", WIDTH / 2, HEIGHT / 2);
         ctx.fillText(`Punteggio: ${score}`, WIDTH / 2, HEIGHT / 2 + 40);
-        ctx.fillText("Premi per ricominciare", WIDTH / 2, HEIGHT / 2 + 80);
+        ctx.fillText(`Record: ${max_score}`, WIDTH / 2, HEIGHT / 2 + 80);
+        ctx.fillText("Premi per ricominciare", WIDTH / 2, HEIGHT / 2 + 120);
     } else {
         // Disegna l'albero
         ctx.fillStyle = BROWN;
@@ -234,6 +240,7 @@ function draw() {
         ctx.font = "36px Arial";
         ctx.textAlign = "left";
         ctx.fillText(`Punteggio: ${score}`, 10, 40);
+        ctx.fillText(`Record: ${max_score}`, 10, 100);
 
         // Disegna il timer
         ctx.strokeStyle = BLACK;
