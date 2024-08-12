@@ -2,7 +2,7 @@ let userId;
 let chatId;
 let messageId;
 
-document.addEventListener("DOMContentLoaded", function() {
+// document.addEventListener("DOMContentLoaded", function() {
     const initDataRaw = Telegram.WebApp.initData;
     const initDataObj = parseInitData(initDataRaw);
     
@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function() {
     console.log("Message ID:", messageId);
 
     // Usare questi dati per fare richieste API, inviare punteggi, ecc.
-});
+// });
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
