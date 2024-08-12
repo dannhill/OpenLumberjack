@@ -1,3 +1,22 @@
+let userId;
+let chatId;
+let messageId;
+
+document.addEventListener("DOMContentLoaded", function() {
+    const initDataRaw = Telegram.WebApp.initData;
+    const initDataObj = parseInitData(initDataRaw);
+    
+    const userId = initDataObj.user.id;
+    const chatId = initDataObj.chat?.id;  // `chat_id` potrebbe non essere presente in alcuni casi
+    const messageId = initDataObj.message?.message_id;
+    
+    console.log("User ID:", userId);
+    console.log("Chat ID:", chatId);
+    console.log("Message ID:", messageId);
+
+    // Usare questi dati per fare richieste API, inviare punteggi, ecc.
+});
+
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -140,6 +159,32 @@ function update() {
             }
         }
     }
+	else if (game_over) {
+		// Dati che vuoi inviare
+		const data = {
+			user_id: 12345,         // Sostituisci con il vero user_id
+			score: 100,             // Il punteggio ottenuto dal giocatore
+			chat_id: 67890,         // Sostituisci con il vero chat_id, se disponibile
+			message_id: 54321       // Sostituisci con il vero message_id, se disponibile
+		};
+
+		// Esegui la richiesta POST
+		fetch('https://dannhill22.eu.pythonanywhere.com/', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(data)
+		})
+		.then(response => response.json())
+		.then(data => {
+			console.log('Success:', data);
+		})
+		.catch((error) => {
+			console.error('Error:', error);
+		});
+
+	}
 }
 
 function draw() {
