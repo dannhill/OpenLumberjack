@@ -162,10 +162,10 @@ function update() {
 	else if (game_over) {
 		// Dati che vuoi inviare
 		const data = {
-			user_id: 12345,         // Sostituisci con il vero user_id
-			score: 100,             // Il punteggio ottenuto dal giocatore
-			chat_id: 67890,         // Sostituisci con il vero chat_id, se disponibile
-			message_id: 54321       // Sostituisci con il vero message_id, se disponibile
+			user_id: userId,         // Sostituisci con il vero user_id
+			score: score,             // Il punteggio ottenuto dal giocatore
+			chat_id: chatId,         // Sostituisci con il vero chat_id, se disponibile
+			message_id: messageId       // Sostituisci con il vero message_id, se disponibile
 		};
 
 		// Esegui la richiesta POST
