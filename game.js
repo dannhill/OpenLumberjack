@@ -1,8 +1,10 @@
 "use strict"
 
-let userId;
+// telegram interaction variables(still not implemented)
+let userId; 
 let chatId;
 let messageId;
+// end of telegram interaction variables
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
