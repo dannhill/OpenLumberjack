@@ -115,7 +115,7 @@ function movePlayer(direction) {
     
     // Gestione tempo gioco
     let inverseProportionalToTimer = max_timer / timer; // valore compreso tra 1 e max_timer(per timer maggiore o uguale a 1)
-    let percentageInverseProportionalToTimer = inverseProportionalToTimer / max_timer; // percentuale compresa tra 0 e 1
+    let percentageInverseProportionalToTimer = inverseProportionalToTimer / max_timer; // percentuale compresa tra 0 e 1(per timer maggiore o uguale a 1)
     addTime(percentageInverseProportionalToTimer);
     // if ((timer / max_timer) * 100 > 70) {
     //     addTime(5);
