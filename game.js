@@ -1,9 +1,10 @@
 "use strict"
-import ChopSound from './sounds/Chop_Log_Sound.mp3';
 
-let userId;
+// telegram interaction variables(still not implemented)
+let userId; 
 let chatId;
 let messageId;
+// end of telegram interaction variables
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -41,7 +42,7 @@ let branches = [];
 
 // Suoni
 
-var chopSound = new Audio(ChopSound);
+var chopSound = new Audio("sounds/Chop_Log_Sound.mp3");
 
 // Funzione per generare un nuovo ramo
 function generate_branch(type = null) {
@@ -105,7 +106,7 @@ function movePlayer(direction) {
     moveBranchesDown();
     score++;
 
-    chopSound.play();
+    chopSound.cloneNode(true).play();
 
     if (max_score < score) max_score = score;
 
@@ -226,7 +227,7 @@ function draw() {
         ctx.font = "36px Arial";
         ctx.textAlign = "left";
         ctx.fillText(`Punteggio: ${score}`, 10, 40);
-        ctx.fillText(`Record: ${userId}`, 10, 100);
+        ctx.fillText(`Record: ${max_score}`, 10, 100);
 
         // Disegna il timer
         ctx.strokeStyle = BLACK;
