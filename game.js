@@ -1,5 +1,4 @@
 "use strict"
-import ChopSound from './sounds/Chop_Log_Sound.mp3';
 
 let userId;
 let chatId;
@@ -41,7 +40,7 @@ let branches = [];
 
 // Suoni
 
-var chopSound = new Audio(ChopSound);
+var chopSound = new Audio("sounds/Chop_Log_Sound.mp3");
 
 // Funzione per generare un nuovo ramo
 function generate_branch(type = null) {
