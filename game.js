@@ -1,17 +1,26 @@
 "use strict"
 
-// telegram interaction variables(still not implemented)
+// TELEGRAM INTERACTION VARIABLES(still not implemented)
 let userId; 
 let chatId;
 let messageId;
 // end of telegram interaction variables
 
-// Colors
+// COLORS
 const WHITE = "rgb(255, 255, 255)";
 const BLACK = "rgb(0, 0, 0)";
 const RED = "rgb(255, 0, 0)";
 const GREEN = "rgb(0, 255, 0)";
 const BROWN = "rgb(139, 69, 19)";
+
+// MEDIA VARIABLES
+// Sounds
+let chopSound = new Audio("sounds/Chop_Log_Sound.mp3");
+// Sprites
+let manSprite = new Image();
+manSprite.src = "sprites/man.png";
+let flippedManSprite = new Image();
+flippedManSprite.src = "sprites/flipped_man.png";
 
 // GAME CONSTANTS
 // Canvas
@@ -21,13 +30,13 @@ const ctx = canvas.getContext('2d');
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
 // Player dimensions
-const PLAYER_WIDTH = WIDTH / 10;
 const PLAYER_HEIGHT = HEIGHT / 4;
+const PLAYER_WIDTH = PLAYER_HEIGHT * (manSprite.width / manSprite.height);
 // Tree dimensions
 const TREE_WIDTH = WIDTH / 20;
 // Branch dimensions
 const BRANCH_HEIGHT = PLAYER_HEIGHT / 2;
-const BRANCH_WIDTH = PLAYER_WIDTH;
+const BRANCH_WIDTH = WIDTH / 6;
 // Timer
 const HARD_MAX_TIMER = 5;
 // Number of branches
@@ -54,15 +63,6 @@ let player_y = HEIGHT - PLAYER_HEIGHT;
 
 // DATA STRUCTURES
 let branches = [];
-
-// MEDIA VARIABLES
-// Sounds
-let chopSound = new Audio("sounds/Chop_Log_Sound.mp3");
-// Sprites
-let manSprite = new Image();
-manSprite.src = "sprites/man.png";
-let flippedManSprite = new Image();
-flippedManSprite.src = "sprites/flipped_man.png";
 
 function generate_branch(type = null) {
     const sides = ["left", "right", "none"];
