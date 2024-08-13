@@ -1,3 +1,5 @@
+import ChopSound from './sounds/Chop_Log_Sound.mp3';
+
 let userId;
 let chatId;
 let messageId;
@@ -50,6 +52,10 @@ let player_x = P_RIGHT;
 let player_y = HEIGHT - 50;
 
 let branches = [];
+
+// Suoni
+
+var chopSound = new Audio(ChopSound);
 
 // Funzione per generare un nuovo ramo
 function generate_branch(type = null) {
@@ -112,7 +118,9 @@ function movePlayer(direction) {
     player_x = (direction === 'left' ? P_LEFT : P_RIGHT);
     moveBranchesDown();
     score++;
-    
+
+    chopSound.play();
+
     if (max_score < score) max_score = score;
 
     timer = max_timer;
