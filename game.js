@@ -156,7 +156,6 @@ function startGame() {
 function restartGame() {
     game_started = true;
     game_over = false;
-	sent = false;
     max_timer = HARD_MAX_TIMER;
     timer = max_timer;
     score = 0;
