@@ -25,11 +25,12 @@ const player_height = HEIGHT / 12;
 const tree_width = WIDTH / 20;
 const branch_height = HEIGHT / 12;
 const branch_width = player_width;
+const HARD_MAX_TIMER = 7;
 let sent = false;
 let score = 0;
 let max_score = 0;
-let timer = 10;
-let max_timer = 10;
+let max_timer = HARD_MAX_TIMER;
+let timer = max_timer;
 let game_started = false;
 let game_over = false;
 const num_branches = Math.floor(HEIGHT / branch_height);
@@ -113,22 +114,26 @@ function movePlayer(direction) {
     if (max_score < score) max_score = score;
     
     // Gestione tempo gioco
-    if ((timer / max_timer) * 100 > 70) {
-        addTime(5);
-    } else if ((timer / max_timer) * 100 > 50 && (timer / max_timer) * 100 < 70) {
-        addTime(10);
-    } else if ((timer / max_timer) * 100 > 30 && (timer / max_timer) * 50 < 70) {
-        addTime(15);
-    } else {
-        addTime(20);
-    }
+
+    addTime(max_timer / timer / max_timer);
+    // if ((timer / max_timer) * 100 > 70) {
+    //     addTime(5);
+    // } else if ((timer / max_timer) * 100 > 50 && (timer / max_timer) * 100 < 70) {
+    //     addTime(10);
+    // } else if ((timer / max_timer) * 100 > 30 && (timer / max_timer) * 50 < 70) {
+    //     addTime(15);
+    // } else {
+    //     addTime(20);
+    // }
 }
 
 function addTime(percentage) {
-    timer += (percentage / 100) * timer;
-    diff = max_timer - timer;
-    if (diff < 0) { // Rimuove eventuale tempo in eccesso
-        timer -= diff;
+    if (timer + percentage * max_timer >= max_timer) {
+        timer = max_timer;
+        return;
+    }
+    else {
+        timer += percentage * timer;
     }
 }
 
@@ -148,7 +153,7 @@ function restartGame() {
     game_started = true;
     game_over = false;
 	sent = false;
-    max_timer = 10;
+    max_timer = HARD_MAX_TIMER;
     timer = max_timer;
     score = 0;
     branches = [];
@@ -169,7 +174,7 @@ function update() {
         }
 
         // Aggiorna il valore massimo del timer
-        max_timer = Math.max(10 - score * 0.02, 1);
+        max_timer = Math.max(HARD_MAX_TIMER - score * 0.02, 1);
 
         // Controllo collisione con il giocatore
         if (branches[branches.length - 1].y + branch_height > player_y) {
