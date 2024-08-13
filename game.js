@@ -6,77 +6,76 @@ let chatId;
 let messageId;
 // end of telegram interaction variables
 
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-
-const WIDTH = window.innerWidth;
-const HEIGHT = window.innerHeight;
-
-// Colori
+// Colors
 const WHITE = "rgb(255, 255, 255)";
 const BLACK = "rgb(0, 0, 0)";
 const RED = "rgb(255, 0, 0)";
 const GREEN = "rgb(0, 255, 0)";
 const BROWN = "rgb(139, 69, 19)";
 
-// Variabili di gioco
-const player_width = WIDTH / 10;
-const player_height = HEIGHT / 4;
-const tree_width = WIDTH / 20;
-const branch_height = player_height / 2;
-const branch_width = player_width;
+// GAME CONSTANTS
+// Canvas
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+// Canvas dimensions
+const WIDTH = window.innerWidth;
+const HEIGHT = window.innerHeight;
+// Player dimensions
+const PLAYER_WIDTH = WIDTH / 10;
+const PLAYER_HEIGHT = HEIGHT / 4;
+// Tree dimensions
+const TREE_WIDTH = WIDTH / 20;
+// Branch dimensions
+const BRANCH_HEIGHT = PLAYER_HEIGHT / 2;
+const BRANCH_WIDTH = PLAYER_WIDTH;
+// Timer
 const HARD_MAX_TIMER = 5;
+// Number of branches
+const NUM_BRANCHES = Math.floor((HEIGHT - PLAYER_HEIGHT) / BRANCH_HEIGHT);
+// Player positions
+const P_LEFT = WIDTH / 2 - TREE_WIDTH / 2 - PLAYER_WIDTH / 2
+const P_RIGHT = WIDTH / 2 + TREE_WIDTH / 2 + PLAYER_WIDTH / 2
+
+// GAME VARIABLES
+// Time
 let start = Date.now();
 let current = start;
 let delta = 0;
-let sent = false;
+// Game variables
 let score = 0;
 let max_score = 0;
 let max_timer = HARD_MAX_TIMER;
 let timer = max_timer;
 let game_started = false;
 let game_over = false;
-const num_branches = Math.floor((HEIGHT - player_height) / branch_height);
-const P_LEFT = WIDTH / 2 - tree_width / 2 - player_width / 2
-const P_RIGHT = WIDTH / 2 + tree_width / 2 + player_width / 2
+// Player position
 let player_x = P_RIGHT;
-let player_y = HEIGHT - player_height;
+let player_y = HEIGHT - PLAYER_HEIGHT;
 
+// DATA STRUCTURES
 let branches = [];
 
-// Suoni
-
+// MEDIA VARIABLES
+// Sounds
 let chopSound = new Audio("sounds/Chop_Log_Sound.mp3");
+// Sprites
 let manSprite = new Image();
 manSprite.src = "sprites/man.png";
 let flippedManSprite = new Image();
 flippedManSprite.src = "sprites/flipped_man.png";
 
-// Funzione per generare un nuovo ramo
 function generate_branch(type = null) {
     const sides = ["left", "right", "none"];
     const side = type ? type : sides[Math.floor(Math.random() * sides.length)];
     return { side: side, y: 0 };
 }
 
-// Genera i primi rami
 function generate_first_branches() {
-    for (let i = 0; i < num_branches; i++) {
-        // if (i < num_branches - 2) {
-            branches.push(generate_branch());
-        // }
-        // else {
-        //     branches.push(generate_branch("none"));
-        // }
-        branches[branches.length - 1].y = i * branch_height;
+    for (let i = 0; i < NUM_BRANCHES; i++) {
+        branches.push(generate_branch());
+        branches[branches.length - 1].y = i * BRANCH_HEIGHT;
     }
 }
-
-generate_first_branches();
-
-// Gestione degli input
-document.addEventListener('keydown', handleKeyDown);
-canvas.addEventListener('mousedown', handleMouseDown);
 
 function handleKeyDown(event) {
     if (!game_started && !game_over) {
@@ -143,7 +142,7 @@ function addTime(percentage) {
 }
 
 function moveBranchesDown() {
-    branches.forEach(branch => branch.y += branch_height);
+    branches.forEach(branch => branch.y += BRANCH_HEIGHT);
     pop_push_new_branch();
     
 }
@@ -206,7 +205,7 @@ function draw() {
     } else {
         // Disegna l'albero
         ctx.fillStyle = BROWN;
-        ctx.fillRect(WIDTH / 2 - tree_width / 2, 0, tree_width, HEIGHT);
+        ctx.fillRect(WIDTH / 2 - TREE_WIDTH / 2, 0, TREE_WIDTH, HEIGHT);
 
         // Disegna i rami
         ctx.fillStyle = GREEN;
@@ -215,21 +214,21 @@ function draw() {
                 return;
             }
             else */if (branch.side === "left") {
-                ctx.fillRect(WIDTH / 2 - tree_width / 2 - branch_width, branch.y, branch_width, branch_height);
+                ctx.fillRect(WIDTH / 2 - TREE_WIDTH / 2 - BRANCH_WIDTH, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
             } else if (branch.side === "right") {
-                ctx.fillRect(WIDTH / 2 + tree_width / 2, branch.y, branch_width, branch_height);
+                ctx.fillRect(WIDTH / 2 + TREE_WIDTH / 2, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
             }
         });
 
         // Disegna il giocatore
         if (player_x === P_LEFT) {
-			ctx.drawImage(manSprite, player_x - player_width / 2, player_y, player_width, player_height);
+			ctx.drawImage(manSprite, player_x - PLAYER_WIDTH / 2, player_y, PLAYER_WIDTH, PLAYER_HEIGHT);
 		}
 		else if (player_x === P_RIGHT) {
-			ctx.drawImage(flippedManSprite, player_x - player_width / 2, player_y, player_width, player_height);
+			ctx.drawImage(flippedManSprite, player_x - PLAYER_WIDTH / 2, player_y, PLAYER_WIDTH, PLAYER_HEIGHT);
 		}
 		// ctx.fillStyle = RED;
-        // ctx.fillRect(player_x - player_width / 2, player_y, player_width, player_height);
+        // ctx.fillRect(player_x - PLAYER_WIDTH / 2, player_y, PLAYER_WIDTH, PLAYER_HEIGHT);
 
         // Disegna il punteggio
         ctx.fillStyle = BLACK;
@@ -246,6 +245,12 @@ function draw() {
         ctx.fillRect(12, HEIGHT - 28, (WIDTH / 5 - 2) * (timer / max_timer), 16);
     }
 }
+
+generate_first_branches();
+
+// Input handling
+document.addEventListener('keydown', handleKeyDown);
+canvas.addEventListener('mousedown', handleMouseDown);
 
 function gameLoop() {
     current = Date.now();
