@@ -25,7 +25,10 @@ const player_height = HEIGHT / 12;
 const tree_width = WIDTH / 20;
 const branch_height = HEIGHT / 12;
 const branch_width = player_width;
-const HARD_MAX_TIMER = 7;
+const HARD_MAX_TIMER = 4;
+let start = Date.now();
+let current = start;
+let delta = 0;
 let sent = false;
 let score = 0;
 let max_score = 0;
@@ -169,7 +172,7 @@ function pop_push_new_branch() {
 function update() {
     if (game_started && !game_over) {
         // Aggiorna il timer
-        timer -= 1 / 60;  // Circa 60 FPS
+        timer -=  delta / 1000;
         if (timer <= 0) {
             game_over = true;
         }
@@ -241,11 +244,14 @@ function draw() {
         ctx.lineWidth = 2;
         ctx.strokeRect(10, HEIGHT - 30, WIDTH / 5, 20);
         ctx.fillStyle = GREEN;
-        ctx.fillRect(12, HEIGHT - 28, (WIDTH / 5) * (timer / max_timer), 16);
+        ctx.fillRect(12, HEIGHT - 28, (WIDTH / 5 - 1) * (timer / max_timer), 16);
     }
 }
 
 function gameLoop() {
+    current = Date.now();
+    delta = current - start;
+    start = current;
     update();
     draw();
     requestAnimationFrame(gameLoop);
