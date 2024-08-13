@@ -243,7 +243,7 @@ function draw() {
         ctx.lineWidth = 2;
         ctx.strokeRect(10, HEIGHT - 30, WIDTH / 5, 20);
         ctx.fillStyle = GREEN;
-        ctx.fillRect(12, HEIGHT - 28, (WIDTH / 5 - 1) * (timer / max_timer), 16);
+        ctx.fillRect(12, HEIGHT - 28, (WIDTH / 5 - 2) * (timer / max_timer), 16);
     }
 }
 

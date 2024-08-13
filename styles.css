@@ -1,7 +1,7 @@
 /*global variables for height and width percentage*/
 :root {
     --width: 100%;
-    --height: 80%;
+    --height: 100%;
 }
 
 body {
