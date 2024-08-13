@@ -1,3 +1,4 @@
+"use strict"
 import ChopSound from './sounds/Chop_Log_Sound.mp3';
 
 let userId;
