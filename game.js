@@ -109,9 +109,7 @@ function movePlayer(direction) {
     chopSound.cloneNode(true).play();
 
     if (max_score < score) max_score = score;
-
-    timer = max_timer;
-
+    
     // Gestione tempo gioco
     if ((timer / max_timer) * 100 > 70) {
         addTime(5);
