@@ -104,7 +104,7 @@ function movePlayer(direction) {
     moveBranchesDown();
     score++;
 
-    chopSound.play();
+    chopSound.cloneNode(true).play();
 
     if (max_score < score) max_score = score;
 
