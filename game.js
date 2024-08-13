@@ -40,7 +40,9 @@ let branches = [];
 
 // Suoni
 
-var chopSound = new Audio("sounds/Chop_Log_Sound.mp3");
+let chopSound = new Audio("sounds/Chop_Log_Sound.mp3");
+let manSprite = new Image();
+manSprite.src = "sprites/man.png";
 
 // Funzione per generare un nuovo ramo
 function generate_branch(type = null) {
@@ -198,8 +200,9 @@ function draw() {
         });
 
         // Disegna il giocatore
-        ctx.fillStyle = RED;
-        ctx.fillRect(player_x - player_width / 2, player_y, player_width, player_height);
+        ctx.drawImage(manSprite, player_x - player_width / 2, player_y, player_width, player_height);
+        // ctx.fillStyle = RED;
+        // ctx.fillRect(player_x - player_width / 2, player_y, player_width, player_height);
 
         // Disegna il punteggio
         ctx.fillStyle = BLACK;
@@ -211,9 +214,9 @@ function draw() {
         // Disegna il timer
         ctx.strokeStyle = BLACK;
         ctx.lineWidth = 2;
-        ctx.strokeRect(10, HEIGHT - 30, WIDTH - 20, 20);
+        ctx.strokeRect(10, HEIGHT - 30, WIDTH / 5, 20);
         ctx.fillStyle = GREEN;
-        ctx.fillRect(12, HEIGHT - 28, (WIDTH - 24) * (timer / max_timer), 16);
+        ctx.fillRect(12, HEIGHT - 28, (WIDTH / 5) * (timer / max_timer), 16);
     }
 }
 
