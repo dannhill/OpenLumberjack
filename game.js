@@ -1,8 +1,10 @@
 "use strict"
 
-let userId;
+// telegram interaction variables(still not implemented)
+let userId; 
 let chatId;
 let messageId;
+// end of telegram interaction variables
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -109,8 +111,25 @@ function movePlayer(direction) {
     chopSound.cloneNode(true).play();
 
     if (max_score < score) max_score = score;
+    
+    // Gestione tempo gioco
+    if ((timer / max_timer) * 100 > 70) {
+        addTime(5);
+    } else if ((timer / max_timer) * 100 > 50 && (timer / max_timer) * 100 < 70) {
+        addTime(10);
+    } else if ((timer / max_timer) * 100 > 30 && (timer / max_timer) * 50 < 70) {
+        addTime(15);
+    } else {
+        addTime(20);
+    }
+}
 
-    timer = max_timer;
+function addTime(percentage) {
+    timer += (percentage / 100) * timer;
+    diff = max_timer - timer;
+    if (diff < 0) { // Rimuove eventuale tempo in eccesso
+        timer -= diff;
+    }
 }
 
 function moveBranchesDown() {
@@ -209,7 +228,7 @@ function draw() {
         ctx.font = "36px Arial";
         ctx.textAlign = "left";
         ctx.fillText(`Punteggio: ${score}`, 10, 40);
-        ctx.fillText(`Record: ${userId}`, 10, 100);
+        ctx.fillText(`Record: ${max_score}`, 10, 100);
 
         // Disegna il timer
         ctx.strokeStyle = BLACK;
