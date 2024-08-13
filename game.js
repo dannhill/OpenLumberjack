@@ -109,8 +109,25 @@ function movePlayer(direction) {
     chopSound.cloneNode(true).play();
 
     if (max_score < score) max_score = score;
+    
+    // Gestione tempo gioco
+    if ((timer / max_timer) * 100 > 70) {
+        addTime(5);
+    } else if ((timer / max_timer) * 100 > 50 && (timer / max_timer) * 100 < 70) {
+        addTime(10);
+    } else if ((timer / max_timer) * 100 > 30 && (timer / max_timer) * 50 < 70) {
+        addTime(15);
+    } else {
+        addTime(20);
+    }
+}
 
-    timer = max_timer;
+function addTime(percentage) {
+    timer += (percentage / 100) * timer;
+    diff = max_timer - timer;
+    if (diff < 0) { // Rimuove eventuale tempo in eccesso
+        timer -= diff;
+    }
 }
 
 function moveBranchesDown() {
