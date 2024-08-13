@@ -21,9 +21,9 @@ const BROWN = "rgb(139, 69, 19)";
 
 // Variabili di gioco
 const player_width = WIDTH / 10;
-const player_height = HEIGHT / 12;
+const player_height = HEIGHT / 4;
 const tree_width = WIDTH / 20;
-const branch_height = HEIGHT / 12;
+const branch_height = player_height / 2;
 const branch_width = player_width;
 const HARD_MAX_TIMER = 5;
 let start = Date.now();
@@ -36,11 +36,11 @@ let max_timer = HARD_MAX_TIMER;
 let timer = max_timer;
 let game_started = false;
 let game_over = false;
-const num_branches = Math.floor(HEIGHT / branch_height);
+const num_branches = Math.floor((HEIGHT - player_height) / branch_height);
 const P_LEFT = WIDTH / 2 - tree_width / 2 - player_width / 2
 const P_RIGHT = WIDTH / 2 + tree_width / 2 + player_width / 2
 let player_x = P_RIGHT;
-let player_y = HEIGHT - 50;
+let player_y = HEIGHT - player_height;
 
 let branches = [];
 
@@ -49,6 +49,8 @@ let branches = [];
 let chopSound = new Audio("sounds/Chop_Log_Sound.mp3");
 let manSprite = new Image();
 manSprite.src = "sprites/man.png";
+let flippedManSprite = new Image();
+flippedManSprite.src = "sprites/flipped_man.png";
 
 // Funzione per generare un nuovo ramo
 function generate_branch(type = null) {
@@ -60,12 +62,12 @@ function generate_branch(type = null) {
 // Genera i primi rami
 function generate_first_branches() {
     for (let i = 0; i < num_branches; i++) {
-        if (i < num_branches - 2) {
+        // if (i < num_branches - 2) {
             branches.push(generate_branch());
-        }
-        else {
-            branches.push(generate_branch("none"));
-        }
+        // }
+        // else {
+        //     branches.push(generate_branch("none"));
+        // }
         branches[branches.length - 1].y = i * branch_height;
     }
 }
@@ -108,27 +110,26 @@ function handleMouseDown(event) {
 }
 
 function movePlayer(direction) {
-    player_x = (direction === 'left' ? P_LEFT : P_RIGHT);
-    moveBranchesDown();
+    player_x = (direction === 'left' ? P_LEFT : direction === 'right' ? P_RIGHT : player_x);
+
+	if ((branches[branches.length - 1].side === "left" && direction === "left") ||
+		(branches[branches.length - 1].side === "right" && direction === "right")) {
+		game_over = true;
+	}
+	moveBranchesDown();
     score++;
 
     chopSound.cloneNode(true).play();//TODOcreates new instance but hopefully it will be removed by garbage collector
 
-    if (max_score < score) max_score = score;
-    
+	// Update record
+    if (max_score < score) {
+		max_score = score;
+	}
+
     // Gestione tempo gioco
     let inverseProportionalToTimer = max_timer / timer / 2; // valore compreso tra 1 e max_timer(per timer maggiore o uguale a 1), poi diviso per 2
     let percentageInverseProportionalToTimer = inverseProportionalToTimer / max_timer; // percentuale compresa tra 0 e 1(per timer maggiore o uguale a 1)
     addTime(percentageInverseProportionalToTimer);
-    // if ((timer / max_timer) * 100 > 70) {
-    //     addTime(5);
-    // } else if ((timer / max_timer) * 100 > 50 && (timer / max_timer) * 100 < 70) {
-    //     addTime(10);
-    // } else if ((timer / max_timer) * 100 > 30 && (timer / max_timer) * 50 < 70) {
-    //     addTime(15);
-    // } else {
-    //     addTime(20);
-    // }
 }
 
 function addTime(percentage) {
@@ -179,14 +180,7 @@ function update() {
 
         // Aggiorna il valore massimo del timer
         max_timer = Math.max(HARD_MAX_TIMER - score * 0.02, 1);
-
-        // Controllo collisione con il giocatore
-        if (branches[branches.length - 1].y + branch_height > player_y) {
-            if ((branches[branches.length - 1].side === "left" && player_x === P_LEFT) ||
-                (branches[branches.length - 1].side === "right" && player_x === P_RIGHT)) {
-                game_over = true;
-            }
-        }
+        
     }
 }
 
@@ -217,10 +211,10 @@ function draw() {
         // Disegna i rami
         ctx.fillStyle = GREEN;
         branches.forEach(branch => {
-            if (branch === branches[branches.length - 1]){
+            /*if (branch === branches[branches.length - 1]){
                 return;
             }
-            else if (branch.side === "left") {
+            else */if (branch.side === "left") {
                 ctx.fillRect(WIDTH / 2 - tree_width / 2 - branch_width, branch.y, branch_width, branch_height);
             } else if (branch.side === "right") {
                 ctx.fillRect(WIDTH / 2 + tree_width / 2, branch.y, branch_width, branch_height);
@@ -228,8 +222,13 @@ function draw() {
         });
 
         // Disegna il giocatore
-        ctx.drawImage(manSprite, player_x - player_width / 2, player_y, player_width, player_height);
-        // ctx.fillStyle = RED;
+        if (player_x === P_LEFT) {
+			ctx.drawImage(manSprite, player_x - player_width / 2, player_y, player_width, player_height);
+		}
+		else if (player_x === P_RIGHT) {
+			ctx.drawImage(flippedManSprite, player_x - player_width / 2, player_y, player_width, player_height);
+		}
+		// ctx.fillStyle = RED;
         // ctx.fillRect(player_x - player_width / 2, player_y, player_width, player_height);
 
         // Disegna il punteggio
