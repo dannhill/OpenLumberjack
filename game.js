@@ -112,7 +112,7 @@ function movePlayer(direction) {
     moveBranchesDown();
     score++;
 
-    chopSound.cloneNode(true).play();
+    chopSound.cloneNode(true).play();//TODOcreates new instance but hopefully it will be removed by garbage collector
 
     if (max_score < score) max_score = score;
     
