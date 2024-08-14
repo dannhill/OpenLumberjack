@@ -21,6 +21,8 @@ let manSprite = new Image();
 manSprite.src = "sprites/man.png";
 let flippedManSprite = new Image();
 flippedManSprite.src = "sprites/flipped_man.png";
+let background = new Image();
+background.src = "images/background.png";
 
 // GAME CONSTANTS
 // Canvas
@@ -202,6 +204,8 @@ function draw() {
         ctx.fillText(`Record: ${max_score}`, WIDTH / 2, HEIGHT / 2 + 80);
         ctx.fillText("Premi per ricominciare", WIDTH / 2, HEIGHT / 2 + 120);
     } else {
+        // Disegna lo sfondo
+        ctx.drawImage(background, 0, 0, WIDTH, HEIGHT);
         // Disegna l'albero
         ctx.fillStyle = BROWN;
         ctx.fillRect(WIDTH / 2 - TREE_WIDTH / 2, 0, TREE_WIDTH, HEIGHT);
