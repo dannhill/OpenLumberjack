@@ -23,6 +23,10 @@ let flippedManSprite = new Image();
 flippedManSprite.src = "sprites/flipped_man.png";
 let background = new Image();
 background.src = "images/background.png";
+let sBranch = new Image();
+sBranch.src = "sprites/branch.png";
+let sFlippedBranch = new Image();
+sFlippedBranch.src = "sprites/flipped_branch.png";
 
 // GAME CONSTANTS
 // Canvas
@@ -217,9 +221,9 @@ function draw() {
                 return;
             }
             else */if (branch.side === "left") {
-                ctx.fillRect(WIDTH / 2 - TREE_WIDTH / 2 - BRANCH_WIDTH, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
+                ctx.drawImage(sFlippedBranch, WIDTH / 2 - TREE_WIDTH / 2 - BRANCH_WIDTH, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
             } else if (branch.side === "right") {
-                ctx.fillRect(WIDTH / 2 + TREE_WIDTH / 2, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
+                ctx.drawImage(sBranch, WIDTH / 2 + TREE_WIDTH / 2, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
             }
         });
 
