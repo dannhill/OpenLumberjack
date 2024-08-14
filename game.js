@@ -16,6 +16,7 @@ const BROWN = "rgb(139, 69, 19)";
 // MEDIA VARIABLES
 // Sounds
 let chopSound = new Audio("sounds/Chop_Log_Sound.mp3");
+let pauseSound = new Audio("sounds/Pause_Sound.mp3");
 // Sprites
 let manSprite = new Image();
 manSprite.src = "sprites/man.png";
@@ -63,6 +64,7 @@ let max_timer = HARD_MAX_TIMER;
 let timer = max_timer;
 let game_started = false;
 let game_over = false;
+let game_paused = false;
 // Player position
 let player_x = P_RIGHT;
 let player_y = HEIGHT - PLAYER_HEIGHT;
@@ -84,21 +86,42 @@ function generate_first_branches() {
 }
 
 function handleKeyDown(event) {
-    if (!game_started && !game_over) {
+    if (!game_started && !game_over && !game_paused) {
         if (event.code === 'Space') {
             startGame();
         }
-    } else if (game_started && !game_over) {
+    } else if (game_started && !game_over && !game_paused) {
+        if (event.code === 'Space') {
+            pauseGame();
+        }
         if (event.code === 'ArrowLeft') {
             movePlayer('left');
         } else if (event.code === 'ArrowRight') {
             movePlayer('right');
+        }
+    } else if (game_paused) {
+        if (event.code === 'Space') {
+            resumeGame();
         }
     } else if (game_over) {
         if (event.code === 'Space') {
             restartGame();
         }
     }
+}
+
+function pauseGame() {
+    game_paused = true;
+    game_started = false;
+
+    pauseSound.cloneNode(true).play();
+}
+
+function resumeGame() {
+    game_paused = false;
+    game_started = true;
+
+    pauseSound.cloneNode(true).play();
 }
 
 function handleMouseDown(event) {
@@ -124,7 +147,8 @@ function movePlayer(direction) {
 	moveBranchesDown();
     score++;
 
-    chopSound.cloneNode(true).play();//TODOcreates new instance but hopefully it will be removed by garbage collector
+    // TODO creates new instance but hopefully it will be removed by garbage collector
+    chopSound.cloneNode(true).play();
 
 	// Update record
     if (max_score < score) {
@@ -194,7 +218,7 @@ function draw() {
     ctx.fillStyle = WHITE;
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
-    if (!game_started) {
+    if (!game_started && !game_paused) {
         ctx.fillStyle = BLACK;
         ctx.font = "36px Arial";
         ctx.textAlign = "center";
@@ -207,6 +231,12 @@ function draw() {
         ctx.fillText(`Punteggio: ${score}`, WIDTH / 2, HEIGHT / 2 + 40);
         ctx.fillText(`Record: ${max_score}`, WIDTH / 2, HEIGHT / 2 + 80);
         ctx.fillText("Premi per ricominciare", WIDTH / 2, HEIGHT / 2 + 120);
+    } else if (game_paused) {
+        // TODO Cambiare questo schermo di pausa con una roba più carina
+        ctx.fillStyle = BLACK;
+        ctx.font = "36px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("Pausa", WIDTH / 2, HEIGHT / 2);
     } else {
         // Disegna lo sfondo
         ctx.drawImage(background, 0, 0, WIDTH, HEIGHT);
