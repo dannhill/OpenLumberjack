@@ -42,7 +42,7 @@ const PLAYER_WIDTH = PLAYER_HEIGHT * (383 / 521);//hardcoded ratio, to be change
 const TREE_WIDTH = WIDTH / 20;
 // Branch dimensions
 const BRANCH_HEIGHT = PLAYER_HEIGHT / 2;
-const BRANCH_WIDTH = WIDTH / 6;
+const BRANCH_WIDTH = WIDTH / 4;
 // Timer
 const HARD_MAX_TIMER = 5;
 // Number of branches
