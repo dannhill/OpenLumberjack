@@ -31,6 +31,7 @@ const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
 // Player dimensions
 const PLAYER_HEIGHT = HEIGHT / 4;
+while (manSprite.height == 0 || manSprite.width == 0) {}
 const PLAYER_WIDTH = PLAYER_HEIGHT * (manSprite.width / manSprite.height);
 // Tree dimensions
 const TREE_WIDTH = WIDTH / 20;
