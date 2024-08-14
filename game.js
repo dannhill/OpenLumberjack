@@ -12,7 +12,7 @@ const BLACK = "rgb(0, 0, 0)";
 const RED = "rgb(255, 0, 0)";
 const GREEN = "rgb(0, 255, 0)";
 const BROWN = "rgb(139, 69, 19)";
-const BOH = "rgba(128, 29, 12, 0.8)";
+const BRICK_RED = "rgba(128, 29, 12, 0.8)";
 
 // MEDIA VARIABLES
 // Sounds
@@ -239,7 +239,7 @@ function draw() {
         // ctx.fillRect(player_x - PLAYER_WIDTH / 2, player_y, PLAYER_WIDTH, PLAYER_HEIGHT);
 
         // Disegna il punteggio
-        ctx.fillStyle = BOH;
+        ctx.fillStyle = BRICK_RED;
         ctx.font = "36px Arial";
         ctx.textAlign = "left";
         let textWidth = ctx.measureText(`Punteggio: ${score}`).width + 20;
