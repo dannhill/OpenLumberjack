@@ -12,6 +12,7 @@ const BLACK = "rgb(0, 0, 0)";
 const RED = "rgb(255, 0, 0)";
 const GREEN = "rgb(0, 255, 0)";
 const BROWN = "rgb(139, 69, 19)";
+const BOH = "rgba(128, 29, 12, 0.8)";
 
 // MEDIA VARIABLES
 // Sounds
@@ -238,11 +239,15 @@ function draw() {
         // ctx.fillRect(player_x - PLAYER_WIDTH / 2, player_y, PLAYER_WIDTH, PLAYER_HEIGHT);
 
         // Disegna il punteggio
-        ctx.fillStyle = BLACK;
+        ctx.fillStyle = BOH;
         ctx.font = "36px Arial";
         ctx.textAlign = "left";
-        ctx.fillText(`Punteggio: ${score}`, 10, 40);
-        ctx.fillText(`Record: ${max_score}`, 10, 100);
+        let textWidth = ctx.measureText(`Punteggio: ${score}`).width + 20;
+        let textHeight = 36;
+        ctx.fillRect(10, 10, textWidth, textHeight*2 + 20);
+        ctx.fillStyle = WHITE; // Cambia il colore del testo
+        ctx.fillText(`Punteggio: ${score}`, 20, 50);
+        ctx.fillText(`Record: ${max_score}`, 20, 90);
 
         // Disegna il timer
         ctx.strokeStyle = BLACK;
