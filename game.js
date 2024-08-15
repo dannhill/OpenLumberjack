@@ -28,7 +28,7 @@ background.src = "images/background.png";
 let sBranch = new Image();
 sBranch.src = "sprites/branch.png";
 let sFlippedBranch = new Image();
-sFlippedBranch.src = "sprites/flipped_branch.png";
+sFlippedBranch.src = "sprites/branch_flipped.png";
 let iTrunk = new Image();
 iTrunk.src = "images/trunk.png";
 // Fonts
@@ -77,6 +77,7 @@ let timer = max_timer;
 let game_started = false;
 let game_over = false;
 let game_paused = false;
+let tree_y = 0;
 // Player position
 let player_x = P_RIGHT;
 let player_y = HEIGHT - PLAYER_HEIGHT;
@@ -212,8 +213,11 @@ function addTime(percentage) {
 
 function moveBranchesDown() {
     branches.forEach(branch => branch.y += BRANCH_HEIGHT);
+    tree_y += BRANCH_HEIGHT;
+    if (tree_y > HEIGHT / 2) {
+        tree_y -= HEIGHT / 2;
+    }
     pop_push_new_branch();
-    
 }
 
 function startGame() {
@@ -282,9 +286,11 @@ function draw() {
 		const TREE_FRACTION = TREE_WIDTH / 3;
         // Disegna l'albero TODO CHANGE THE FOLLOWING CODE TO DRAW A TRUNK THAT IS UNREADABLE
 		//upper tile(slightly larger than TREE_WIDTH cause image has a little bit of transparency)
-		ctx.drawImage(iTrunk, WIDTH / 2 - TREE_WIDTH / 2 - TREE_FRACTION, 0, TREE_WIDTH + TREE_FRACTION * 2, HEIGHT / 2);
+		ctx.drawImage(iTrunk, WIDTH / 2 - TREE_WIDTH / 2 - TREE_FRACTION, tree_y, TREE_WIDTH + TREE_FRACTION * 2, HEIGHT / 2);
 		//lower tile(slightly larger than TREE_WIDTH cause image has a little bit of transparency)
-		ctx.drawImage(iTrunk, WIDTH / 2 - TREE_WIDTH / 2 - TREE_FRACTION, HEIGHT / 2, TREE_WIDTH + TREE_FRACTION * 2, HEIGHT / 2);
+		ctx.drawImage(iTrunk, WIDTH / 2 - TREE_WIDTH / 2 - TREE_FRACTION, tree_y + HEIGHT / 2, TREE_WIDTH + TREE_FRACTION * 2, HEIGHT / 2);
+        // extra trunk to cover the gap between the two tiles
+        ctx.drawImage(iTrunk, WIDTH / 2 - TREE_WIDTH / 2 - TREE_FRACTION, tree_y - HEIGHT / 2, TREE_WIDTH + TREE_FRACTION * 2, HEIGHT / 2);
 
         // Disegna i rami
         ctx.fillStyle = GREEN;
