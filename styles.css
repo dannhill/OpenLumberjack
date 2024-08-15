@@ -24,8 +24,7 @@ html {
 
 #gameCanvas {
     border: 1px solid #000;
-    max-width: 720px;
-    max-height: 480px;
+    max-width: 720px;
     width: var(--width);
     height: var(--height);
 }
