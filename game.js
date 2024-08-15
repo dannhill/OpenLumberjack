@@ -47,10 +47,10 @@ const HEIGHT = window.innerHeight;
 const PLAYER_HEIGHT = HEIGHT / 4;
 const PLAYER_WIDTH = PLAYER_HEIGHT * (383 / 521);//TODO hardcoded ratio, to be changed if using another image
 // Tree dimensions
-const TREE_WIDTH = WIDTH / 8;
+const TREE_WIDTH = WIDTH / 5;
 // Branch dimensions
 const BRANCH_HEIGHT = PLAYER_HEIGHT / 2;
-const BRANCH_WIDTH = WIDTH / 3;
+const BRANCH_WIDTH = WIDTH / 2.5;
 // Timer
 const HARD_MAX_TIMER = 5;
 // Number of branches
