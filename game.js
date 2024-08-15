@@ -59,7 +59,7 @@ const NUM_BRANCHES = Math.floor((HEIGHT - PLAYER_HEIGHT) / BRANCH_HEIGHT);
 const P_LEFT = WIDTH / 2 - TREE_WIDTH / 2 - PLAYER_WIDTH / 2
 const P_RIGHT = WIDTH / 2 + TREE_WIDTH / 2 + PLAYER_WIDTH / 2
 // Movement speed
-const TREE_SLIDING_SPEED = 300; // pixels per second
+const TREE_SLIDING_SPEED = 500; // pixels per second
 // Pause button variables
 const PAUSE_BUTTON_X = WIDTH - 160;
 const PAUSE_BUTTON_Y = 10;
@@ -214,9 +214,9 @@ function addTime(percentage) {
         timer += percentage * max_timer;
     }
 }
-
+// TODO fix this thing when prev_target_height is < 0. It is there the problem
 function moveBranchesDown() {
-    if (is_tree_sliding && prev_target_height > 0) {
+    if (is_tree_sliding && prev_target_height != 0) {
         // let modulo = branches[0].y % BRANCH_HEIGHT;
         branches.forEach(branch => branch.y += prev_target_height);
         tree_y += prev_target_height;
@@ -269,6 +269,12 @@ function update() {
         max_timer = Math.max(HARD_MAX_TIMER - score * 0.02, 1);
         
         if (prev_target_height <= 0) {
+            // tree_y += prev_target_height;
+            // // if (tree_y <= HEIGHT / 2) {
+            // //     tree_y += HEIGHT / 2;
+            // // }
+            // branches.forEach(branch => branch.y += prev_target_height);
+            // prev_target_height = 0;
             is_tree_sliding = false;
         }
         if (is_tree_sliding) {
