@@ -29,6 +29,8 @@ let sBranch = new Image();
 sBranch.src = "sprites/branch.png";
 let sFlippedBranch = new Image();
 sFlippedBranch.src = "sprites/flipped_branch.png";
+let iTrunk = new Image();
+iTrunk.src = "images/trunk.png";
 
 // GAME CONSTANTS
 // Canvas
@@ -41,7 +43,7 @@ const HEIGHT = window.innerHeight;
 const PLAYER_HEIGHT = HEIGHT / 4;
 const PLAYER_WIDTH = PLAYER_HEIGHT * (383 / 521);//hardcoded ratio, to be changed if using another image
 // Tree dimensions
-const TREE_WIDTH = WIDTH / 20;
+const TREE_WIDTH = WIDTH / 10;
 // Branch dimensions
 const BRANCH_HEIGHT = PLAYER_HEIGHT / 2;
 const BRANCH_WIDTH = WIDTH / 3;
@@ -241,9 +243,12 @@ function draw() {
     } else {
         // Disegna lo sfondo
         ctx.drawImage(background, 0, 0, WIDTH, HEIGHT);
-        // Disegna l'albero
-        ctx.fillStyle = BROWN;
-        ctx.fillRect(WIDTH / 2 - TREE_WIDTH / 2, 0, TREE_WIDTH, HEIGHT);
+		const TREE_FRACTION = TREE_WIDTH / 3;
+        // Disegna l'albero TODO CHANGE THE FOLLOWING CODE TO DRAW A TRUNK THAT IS UNREADABLE
+		//upper tile(slightly larger than TREE_WIDTH cause image has a little bit of transparency)
+		ctx.drawImage(iTrunk, WIDTH / 2 - TREE_WIDTH / 2 - TREE_FRACTION, 0, TREE_WIDTH + TREE_FRACTION * 2, HEIGHT / 2);
+		//lower tile(slightly larger than TREE_WIDTH cause image has a little bit of transparency)
+		ctx.drawImage(iTrunk, WIDTH / 2 - TREE_WIDTH / 2 - TREE_FRACTION, HEIGHT / 2, TREE_WIDTH + TREE_FRACTION * 2, HEIGHT / 2);
 
         // Disegna i rami
         ctx.fillStyle = GREEN;
