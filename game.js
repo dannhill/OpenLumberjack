@@ -1,12 +1,12 @@
 "use strict"
 
-// TELEGRAM INTERACTION VARIABLES(still not implemented)
+//! TELEGRAM INTERACTION VARIABLES(still not implemented)
 let userId; 
 let chatId;
 let messageId;
 // end of telegram interaction variables
 
-// COLORS
+//! COLORS
 const WHITE = "rgb(255, 255, 255)";
 const BLACK = "rgb(0, 0, 0)";
 const RED = "rgb(255, 0, 0)";
@@ -14,7 +14,7 @@ const GREEN = "rgb(0, 255, 0)";
 const BROWN = "rgb(139, 69, 19)";
 const BRICK_RED = "rgba(128, 29, 12, 0.8)";
 
-// MEDIA VARIABLES
+//! MEDIA VARIABLES
 // Sounds
 let chopSound = new Audio("sounds/Chop_Log_Sound.mp3");
 let pauseSound = new Audio("sounds/Pause_Sound.mp3");
@@ -31,8 +31,12 @@ let sFlippedBranch = new Image();
 sFlippedBranch.src = "sprites/flipped_branch.png";
 let iTrunk = new Image();
 iTrunk.src = "images/trunk.png";
+// Fonts
+let pixelFont = new FontFace('PixelFont', 'url(./fonts/PixelEmulator-xq08.ttf)');
+document.fonts.add(pixelFont);
 
-// GAME CONSTANTS
+
+//! GAME CONSTANTS
 // Canvas
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -54,8 +58,13 @@ const NUM_BRANCHES = Math.floor((HEIGHT - PLAYER_HEIGHT) / BRANCH_HEIGHT);
 // Player positions
 const P_LEFT = WIDTH / 2 - TREE_WIDTH / 2 - PLAYER_WIDTH / 2
 const P_RIGHT = WIDTH / 2 + TREE_WIDTH / 2 + PLAYER_WIDTH / 2
+// Pause button variables
+const PAUSE_BUTTON_X = WIDTH - 160;
+const PAUSE_BUTTON_Y = 10;
+const PAUSE_BUTTON_WIDTH = 150;
+const PAUSE_BUTTON_HEIGHT = 60;
 
-// GAME VARIABLES
+//! GAME VARIABLES
 // Time
 let start = Date.now();
 let current = start;
@@ -72,7 +81,7 @@ let game_paused = false;
 let player_x = P_RIGHT;
 let player_y = HEIGHT - PLAYER_HEIGHT;
 
-// DATA STRUCTURES
+//! DATA STRUCTURES
 let branches = [];
 
 function generate_branch(type = null) {
@@ -132,11 +141,38 @@ function handleMouseDown(event) {
         startGame();
     } else if (game_over){
         restartGame();
-    } 
+    } else if (game_paused) {
+        resumeGame();
+    }
     else {
         const rect = canvas.getBoundingClientRect();
         const x = event.clientX - rect.left;
-        movePlayer(x < WIDTH / 2 ? 'left' : 'right');
+        const y = event.clientY - rect.top;
+
+        //! For some reason the width is not correct, so we have to divide it by 2
+
+        if (x >= PAUSE_BUTTON_X / 2 && x <= PAUSE_BUTTON_X / 2 + PAUSE_BUTTON_WIDTH && y >= PAUSE_BUTTON_Y && y <= PAUSE_BUTTON_Y + PAUSE_BUTTON_HEIGHT) {
+            pauseGame();
+        }
+        else {
+            movePlayer(x < WIDTH / 2 ? 'left' : 'right');
+        }
+    }
+}
+
+// TODO Needs to be adjusted and studied
+function handleMouseOver(event) {
+    if(game_started) {
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+
+        if(x >= PAUSE_BUTTON_X / 2 && x <= PAUSE_BUTTON_X / 2 + PAUSE_BUTTON_WIDTH && y >= PAUSE_BUTTON_Y && y <= PAUSE_BUTTON_Y + PAUSE_BUTTON_HEIGHT) {
+            canvas.style.cursor = "pointer";
+        }
+    }
+    else {
+        canvas.style.cursor = "default";
     }
 }
 
@@ -223,12 +259,12 @@ function draw() {
 
     if (!game_started && !game_paused) {
         ctx.fillStyle = BLACK;
-        ctx.font = "36px Arial";
+        ctx.font = "36px PixelFont";
         ctx.textAlign = "center";
         ctx.fillText("Premi per iniziare", WIDTH / 2, HEIGHT / 2);
     } else if (game_over) {
         ctx.fillStyle = BLACK;
-        ctx.font = "36px Arial";
+        ctx.font = "36px PixelFont";
         ctx.textAlign = "center";
         ctx.fillText("Game Over!", WIDTH / 2, HEIGHT / 2);
         ctx.fillText(`Punteggio: ${score}`, WIDTH / 2, HEIGHT / 2 + 40);
@@ -237,7 +273,7 @@ function draw() {
     } else if (game_paused) {
         // TODO Cambiare questo schermo di pausa con una roba più carina
         ctx.fillStyle = BLACK;
-        ctx.font = "36px Arial";
+        ctx.font = "36px PixelFont";
         ctx.textAlign = "center";
         ctx.fillText("Pausa", WIDTH / 2, HEIGHT / 2);
     } else {
@@ -275,7 +311,7 @@ function draw() {
 
         // Disegna il punteggio
         ctx.fillStyle = BRICK_RED;
-        ctx.font = "36px Arial";
+        ctx.font = "36px PixelFont";
         ctx.textAlign = "left";
         let textWidth = ctx.measureText(`Punteggio: ${score}`).width + 20;
         let textHeight = 36;
@@ -290,6 +326,13 @@ function draw() {
         ctx.strokeRect(10, HEIGHT - 30, WIDTH / 5, 20);
         ctx.fillStyle = GREEN;
         ctx.fillRect(12, HEIGHT - 28, (WIDTH / 5 - 2) * (timer / max_timer), 16);
+
+        // Disegna il pulsante di pausa (Versione beta, sostituire testo con immagine) 
+        ctx.fillStyle = BRICK_RED;
+        ctx.textAlign = "center";
+        ctx.fillRect(PAUSE_BUTTON_X, PAUSE_BUTTON_Y, PAUSE_BUTTON_WIDTH, PAUSE_BUTTON_HEIGHT);
+        ctx.fillStyle = WHITE;
+        ctx.fillText("Pausa", WIDTH - 83, 50);
     }
 }
 
@@ -298,6 +341,7 @@ generate_first_branches();
 // Input handling
 document.addEventListener('keydown', handleKeyDown);
 canvas.addEventListener('mousedown', handleMouseDown);
+canvas.addEventListener('mouseover', handleMouseOver);
 
 function gameLoop() {
     current = Date.now();
