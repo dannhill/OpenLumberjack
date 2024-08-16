@@ -92,13 +92,13 @@ let branches = [];
 function generate_branch(type = null) {
     const sides = ["left", "right", "none"];
     const side = type ? type : sides[Math.floor(Math.random() * sides.length)];
-    return { side: side, y: -prev_target_height * 2 };
+    return { side: side, y: -prev_target_height };
 }
 
 function generate_first_branches() {
     for (let i = -1; i < NUM_BRANCHES - 1; i++) {
         branches.push(generate_branch());
-        branches[branches.length - 1].y = (i + 0.5) * BRANCH_HEIGHT;
+        branches[branches.length - 1].y = i * BRANCH_HEIGHT;
     }
 }
 
