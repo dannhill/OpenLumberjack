@@ -61,7 +61,9 @@ const NUM_BRANCHES = Math.floor((HEIGHT - PLAYER_HEIGHT) / BRANCH_HEIGHT);
 // Player positions
 const P_LEFT = WIDTH / 2 - TREE_WIDTH / 2 - PLAYER_WIDTH / 2
 const P_RIGHT = WIDTH / 2 + TREE_WIDTH / 2 + PLAYER_WIDTH / 2
-// Pause button constants
+// Movement speed
+const TREE_SLIDING_SPEED = 700; // pixels per second
+// Pause button variables
 const PAUSE_BUTTON_X = WIDTH - 100;
 const PAUSE_BUTTON_Y = 10;
 const PAUSE_BUTTON_WIDTH = 90;
@@ -81,6 +83,8 @@ let game_started = false;
 let game_over = false;
 let game_paused = false;
 let tree_y = 0;
+let is_tree_sliding = false;
+let prev_target_height = 0;
 // Player position
 let player_x = P_RIGHT;
 let player_y = HEIGHT - PLAYER_HEIGHT;
@@ -91,11 +95,11 @@ let branches = [];
 function generate_branch(type = null) {
     const sides = ["left", "right", "none"];
     const side = type ? type : sides[Math.floor(Math.random() * sides.length)];
-    return { side: side, y: 0 };
+    return { side: side, y: -prev_target_height };
 }
 
 function generate_first_branches() {
-    for (let i = 0; i < NUM_BRANCHES; i++) {
+    for (let i = -1; i < NUM_BRANCHES - 1; i++) {
         branches.push(generate_branch());
         branches[branches.length - 1].y = i * BRANCH_HEIGHT;
     }
@@ -215,13 +219,20 @@ function addTime(percentage) {
         timer += percentage * max_timer;
     }
 }
-
+// TODO fix this thing when prev_target_height is < 0. It is there the problem
 function moveBranchesDown() {
-    branches.forEach(branch => branch.y += BRANCH_HEIGHT);
-    tree_y += BRANCH_HEIGHT;
-    if (tree_y > HEIGHT / 2) {
-        tree_y -= HEIGHT / 2;
+    if (is_tree_sliding && prev_target_height != 0) {
+        // let modulo = branches[0].y % BRANCH_HEIGHT;
+        branches.forEach(branch => branch.y += prev_target_height);
+        tree_y += prev_target_height;
+        if (tree_y > HEIGHT / 2) {
+            tree_y -= HEIGHT / 2;
+        }
     }
+    if (!is_tree_sliding && prev_target_height <= 0) {
+        is_tree_sliding = true;
+    }
+    prev_target_height = BRANCH_HEIGHT;
     pop_push_new_branch();
 }
 
@@ -236,7 +247,12 @@ function restartGame() {
     game_over = false;
     max_timer = HARD_MAX_TIMER;
     timer = max_timer;
+    tree_y = 0;
     score = 0;
+    tree_y = 0;
+    is_tree_sliding = false;
+    prev_target_height = 0;
+    player_x = P_RIGHT;
     branches = [];
     generate_first_branches();
 }
@@ -257,6 +273,23 @@ function update() {
         // Aggiorna il valore massimo del timer
         max_timer = Math.max(HARD_MAX_TIMER - score * 0.02, 1);
         
+        if (prev_target_height <= 0) {
+            // tree_y += prev_target_height;
+            // // if (tree_y <= HEIGHT / 2) {
+            // //     tree_y += HEIGHT / 2;
+            // // }
+            // branches.forEach(branch => branch.y += prev_target_height);
+            // prev_target_height = 0;
+            is_tree_sliding = false;
+        }
+        if (is_tree_sliding) {
+            tree_y += delta / 1000 * TREE_SLIDING_SPEED;
+            if (tree_y > HEIGHT / 2) {
+                tree_y -= HEIGHT / 2;
+            }
+            branches.forEach(branch => branch.y += delta / 1000 * TREE_SLIDING_SPEED);
+            prev_target_height -= delta / 1000 * TREE_SLIDING_SPEED;
+        }
     }
 }
 
