@@ -96,9 +96,9 @@ function generate_branch(type = null) {
 }
 
 function generate_first_branches() {
-    for (let i = 0; i < NUM_BRANCHES; i++) {
+    for (let i = -1; i < NUM_BRANCHES - 1; i++) {
         branches.push(generate_branch());
-        branches[branches.length - 1].y = i * BRANCH_HEIGHT;
+        branches[branches.length - 1].y = (i + 0.5) * BRANCH_HEIGHT;
     }
 }
 
