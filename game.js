@@ -59,7 +59,7 @@ const NUM_BRANCHES = Math.floor((HEIGHT - PLAYER_HEIGHT) / BRANCH_HEIGHT);
 const P_LEFT = WIDTH / 2 - TREE_WIDTH / 2 - PLAYER_WIDTH / 2
 const P_RIGHT = WIDTH / 2 + TREE_WIDTH / 2 + PLAYER_WIDTH / 2
 // Movement speed
-const TREE_SLIDING_SPEED = 500; // pixels per second
+const TREE_SLIDING_SPEED = 700; // pixels per second
 // Pause button variables
 const PAUSE_BUTTON_X = WIDTH - 160;
 const PAUSE_BUTTON_Y = 10;
@@ -92,7 +92,7 @@ let branches = [];
 function generate_branch(type = null) {
     const sides = ["left", "right", "none"];
     const side = type ? type : sides[Math.floor(Math.random() * sides.length)];
-    return { side: side, y: -prev_target_height };
+    return { side: side, y: -prev_target_height * 2 };
 }
 
 function generate_first_branches() {
