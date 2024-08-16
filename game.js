@@ -145,7 +145,7 @@ function resumeGame() {
 }
 
 function handleMouseDown(event) {
-    if (!game_started && !game_over) {
+    if (!game_started && !game_over && !game_paused) {
         startGame();
     } else if (game_over){
         restartGame();
@@ -332,10 +332,7 @@ function draw() {
         // Disegna i rami
         ctx.fillStyle = GREEN;
         branches.forEach(branch => {
-            /*if (branch === branches[branches.length - 1]){
-                return;
-            }
-            else */if (branch.side === "left") {
+            if (branch.side === "left") {
                 ctx.drawImage(sFlippedBranch, WIDTH / 2 - TREE_WIDTH / 2 - BRANCH_WIDTH, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
             } else if (branch.side === "right") {
                 ctx.drawImage(sBranch, WIDTH / 2 + TREE_WIDTH / 2, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
