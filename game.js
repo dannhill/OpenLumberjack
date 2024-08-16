@@ -13,11 +13,14 @@ const RED = "rgb(255, 0, 0)";
 const GREEN = "rgb(0, 255, 0)";
 const BROWN = "rgb(139, 69, 19)";
 const BRICK_RED = "rgba(128, 29, 12, 0.8)";
+const BRICK_RED_TRANSPARENT = "rgba(128, 29, 12, 0.5)";
 
 //! MEDIA VARIABLES
 // Sounds
 let chopSound = new Audio("sounds/Chop_Log_Sound.mp3");
+chopSound.volume = 0.7;
 let pauseSound = new Audio("sounds/Pause_Sound.mp3");
+pauseSound.volume = 0.3;
 // Sprites
 let manSprite = new Image();
 manSprite.src = "sprites/man.png";
@@ -45,7 +48,7 @@ const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
 // Player dimensions
 const PLAYER_HEIGHT = HEIGHT / 4;
-const PLAYER_WIDTH = PLAYER_HEIGHT * (383 / 521);//TODO hardcoded ratio, to be changed if using another image
+const PLAYER_WIDTH = PLAYER_HEIGHT * (383 / 521); //TODO hardcoded ratio, to be changed if using another image
 // Tree dimensions
 const TREE_WIDTH = WIDTH / 5;
 // Branch dimensions
@@ -61,10 +64,10 @@ const P_RIGHT = WIDTH / 2 + TREE_WIDTH / 2 + PLAYER_WIDTH / 2
 // Movement speed
 const TREE_SLIDING_SPEED = 700; // pixels per second
 // Pause button variables
-const PAUSE_BUTTON_X = WIDTH - 160;
+const PAUSE_BUTTON_X = WIDTH - 100;
 const PAUSE_BUTTON_Y = 10;
-const PAUSE_BUTTON_WIDTH = 150;
-const PAUSE_BUTTON_HEIGHT = 60;
+const PAUSE_BUTTON_WIDTH = 90;
+const PAUSE_BUTTON_HEIGHT = 38;
 
 //! GAME VARIABLES
 // Time
@@ -131,14 +134,14 @@ function pauseGame() {
     game_paused = true;
     game_started = false;
 
-    pauseSound.cloneNode(true).play();
+    pauseSound.play();
 }
 
 function resumeGame() {
     game_paused = false;
     game_started = true;
 
-    pauseSound.cloneNode(true).play();
+    pauseSound.play();
 }
 
 function handleMouseDown(event) {
@@ -154,9 +157,13 @@ function handleMouseDown(event) {
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
 
-        //! For some reason the width is not correct, so we have to divide it by 2
+        //! DEBUG
+        //console.log ("Pressed in " + x + " " + y + " position");
+        //console.log ("Pause Button is in " + PAUSE_BUTTON_X + " " + PAUSE_BUTTON_Y + " position");
+        //console.log ("Pause Button in check should be in " + PAUSE_BUTTON_X / 2  + " " + PAUSE_BUTTON_Y + " position");
 
-        if (x >= PAUSE_BUTTON_X / 2 && x <= PAUSE_BUTTON_X / 2 + PAUSE_BUTTON_WIDTH && y >= PAUSE_BUTTON_Y && y <= PAUSE_BUTTON_Y + PAUSE_BUTTON_HEIGHT) {
+        // TODO Works in mobile, but not in Desktop
+        if (x >= PAUSE_BUTTON_X && x <= PAUSE_BUTTON_X + PAUSE_BUTTON_WIDTH && y >= PAUSE_BUTTON_Y && y <= PAUSE_BUTTON_Y + PAUSE_BUTTON_HEIGHT) {
             pauseGame();
         }
         else {
@@ -191,8 +198,7 @@ function movePlayer(direction) {
 	moveBranchesDown();
     score++;
 
-    // TODO creates new instance but hopefully it will be removed by garbage collector
-    chopSound.cloneNode(true).play();
+    chopSound.play();
 
 	// Update record
     if (max_score < score) {
@@ -208,7 +214,6 @@ function movePlayer(direction) {
 function addTime(percentage) {
     if (timer + percentage * max_timer >= max_timer) {
         timer = max_timer;
-        return;
     }
     else {
         timer += percentage * max_timer;
@@ -294,14 +299,14 @@ function draw() {
     ctx.fillStyle = WHITE;
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
+    ctx.font = screen.width < 1024 ? "20px PixelFont" : "36px PixelFont";
+
     if (!game_started && !game_paused) {
         ctx.fillStyle = BLACK;
-        ctx.font = "36px PixelFont";
         ctx.textAlign = "center";
         ctx.fillText("Premi per iniziare", WIDTH / 2, HEIGHT / 2);
     } else if (game_over) {
         ctx.fillStyle = BLACK;
-        ctx.font = "36px PixelFont";
         ctx.textAlign = "center";
         ctx.fillText("Game Over!", WIDTH / 2, HEIGHT / 2);
         ctx.fillText(`Punteggio: ${score}`, WIDTH / 2, HEIGHT / 2 + 40);
@@ -310,7 +315,6 @@ function draw() {
     } else if (game_paused) {
         // TODO Cambiare questo schermo di pausa con una roba più carina
         ctx.fillStyle = BLACK;
-        ctx.font = "36px PixelFont";
         ctx.textAlign = "center";
         ctx.fillText("Pausa", WIDTH / 2, HEIGHT / 2);
     } else {
@@ -350,14 +354,13 @@ function draw() {
 
         // Disegna il punteggio
         ctx.fillStyle = BRICK_RED;
-        ctx.font = "36px PixelFont";
         ctx.textAlign = "left";
         let textWidth = ctx.measureText(`Punteggio: ${score}`).width + 20;
         let textHeight = 36;
-        ctx.fillRect(10, 10, textWidth, textHeight*2 + 20);
+        ctx.fillRect(10, 10, textWidth, textHeight*2 + 5);
         ctx.fillStyle = WHITE; // Cambia il colore del testo
-        ctx.fillText(`Punteggio: ${score}`, 20, 50);
-        ctx.fillText(`Record: ${max_score}`, 20, 90);
+        ctx.fillText(`Punteggio: ${score}`, 20, 35);
+        ctx.fillText(`Record: ${max_score}`, 20, 75);
 
         // Disegna il timer
         ctx.strokeStyle = BLACK;
@@ -371,7 +374,7 @@ function draw() {
         ctx.textAlign = "center";
         ctx.fillRect(PAUSE_BUTTON_X, PAUSE_BUTTON_Y, PAUSE_BUTTON_WIDTH, PAUSE_BUTTON_HEIGHT);
         ctx.fillStyle = WHITE;
-        ctx.fillText("Pausa", WIDTH - 83, 50);
+        ctx.fillText("Pausa", WIDTH - 54, 35);
     }
 }
 

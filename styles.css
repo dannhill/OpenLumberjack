@@ -14,6 +14,8 @@ body {
     height: 100%;
     margin: 0px;
     background-color: #f0f0f0;
+
+    overflow: hidden;
 }
 
 html {
