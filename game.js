@@ -78,7 +78,7 @@ let delta = 0;
 let score = 0;
 let max_score = 0;
 let max_timer = HARD_MAX_TIMER;
-let timer = max_timer;
+let timer = max_timer / 2;
 let game_started = false;
 let game_over = false;
 let game_paused = false;
@@ -206,7 +206,7 @@ function movePlayer(direction) {
 	}
 
     // Gestione tempo gioco
-    let inverseProportionalToTimer = max_timer / timer / 2; // valore compreso tra 1 e max_timer(per timer maggiore o uguale a 1), poi diviso per 2
+    let inverseProportionalToTimer = max_timer / timer * 0.4; // valore compreso tra 1 e max_timer(per timer maggiore o uguale a 1), poi diviso per 2
     let percentageInverseProportionalToTimer = inverseProportionalToTimer / max_timer; // percentuale compresa tra 0 e 1(per timer maggiore o uguale a 1)
     addTime(percentageInverseProportionalToTimer);
 }
@@ -238,7 +238,6 @@ function moveBranchesDown() {
 
 function startGame() {
     game_started = true;
-    timer = max_timer;
     score = 0;
 }
 
@@ -246,7 +245,7 @@ function restartGame() {
     game_started = true;
     game_over = false;
     max_timer = HARD_MAX_TIMER;
-    timer = max_timer;
+    timer = max_timer / 2;
     tree_y = 0;
     score = 0;
     tree_y = 0;
@@ -271,7 +270,7 @@ function update() {
         }
 
         // Aggiorna il valore massimo del timer
-        max_timer = Math.max(HARD_MAX_TIMER - score * 0.02, 1);
+        max_timer = Math.max(HARD_MAX_TIMER - score * 0.02, 0.5);
         
         if (prev_target_height <= 0) {
             // tree_y += prev_target_height;
