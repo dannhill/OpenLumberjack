@@ -43,6 +43,7 @@ document.fonts.add(pixelFont);
 // Canvas
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
+const FALLING_BRANCHES_TRANSPARENCY = 0.6;
 // Canvas dimensions
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
@@ -61,8 +62,10 @@ const NUM_BRANCHES = Math.floor((HEIGHT - PLAYER_HEIGHT) / BRANCH_HEIGHT);
 // Player positions
 const P_LEFT = WIDTH / 2 - TREE_WIDTH / 2 - PLAYER_WIDTH / 2
 const P_RIGHT = WIDTH / 2 + TREE_WIDTH / 2 + PLAYER_WIDTH / 2
-// Movement speed
+// Physics
 const TREE_SLIDING_SPEED = 700; // pixels per second
+const GRAVITY = 400; // pixels per second squared
+const FADING_BRANCH_SPEED = 0.7; // alpha per second
 // Pause button variables
 const PAUSE_BUTTON_X = WIDTH - 100;
 const PAUSE_BUTTON_Y = 10;
@@ -91,19 +94,7 @@ let player_y = HEIGHT - PLAYER_HEIGHT;
 
 //! DATA STRUCTURES
 let branches = [];
-
-function generate_branch(type = null) {
-    const sides = ["left", "right", "none"];
-    const side = type ? type : sides[Math.floor(Math.random() * sides.length)];
-    return { side: side, y: -prev_target_height * 2 };
-}
-
-function generate_first_branches() {
-    for (let i = -1; i < NUM_BRANCHES - 1; i++) {
-        branches.push(generate_branch());
-        branches[branches.length - 1].y = (i + 0.5) * BRANCH_HEIGHT;
-    }
-}
+let falling_branches = [];
 
 function handleKeyDown(event) {
     if (!game_started && !game_over && !game_paused) {
@@ -128,20 +119,6 @@ function handleKeyDown(event) {
             restartGame();
         }
     }
-}
-
-function pauseGame() {
-    game_paused = true;
-    game_started = false;
-
-    pauseSound.play();
-}
-
-function resumeGame() {
-    game_paused = false;
-    game_started = true;
-
-    pauseSound.play();
 }
 
 function handleMouseDown(event) {
@@ -188,6 +165,33 @@ function handleMouseOver(event) {
     }
 }
 
+function generate_branch(type = null) {
+    const sides = ["left", "right", "none"];
+    const side = type ? type : sides[Math.floor(Math.random() * sides.length)];
+    return { side: side, y: -prev_target_height * 2 };
+}
+
+function generate_first_branches() {
+    for (let i = -1; i < NUM_BRANCHES - 1; i++) {
+        branches.push(generate_branch());
+        branches[branches.length - 1].y = (i + 0.5) * BRANCH_HEIGHT;
+    }
+}
+
+function pauseGame() {
+    game_paused = true;
+    game_started = false;
+
+    pauseSound.play();
+}
+
+function resumeGame() {
+    game_paused = false;
+    game_started = true;
+
+    pauseSound.play();
+}
+
 function movePlayer(direction) {
     player_x = (direction === 'left' ? P_LEFT : direction === 'right' ? P_RIGHT : player_x);
 
@@ -198,7 +202,7 @@ function movePlayer(direction) {
 	moveBranchesDown();
     score++;
 
-    chopSound.play();
+    chopSound.cloneNode().play();
 
 	// Update record
     if (max_score < score) {
@@ -236,6 +240,17 @@ function moveBranchesDown() {
     pop_push_new_branch();
 }
 
+function applyGravityToFallingBranches() {
+    falling_branches.forEach(function(branch) {
+        branch.y += delta / 1000 * branch.velocity;
+        branch.alpha -= delta / 1000 * FADING_BRANCH_SPEED;
+        branch.velocity += delta / 1000 * GRAVITY;
+        if (branch.y >= HEIGHT) {
+            falling_branches.splice(falling_branches.indexOf(branch), 1);
+        }
+    });
+}
+
 function startGame() {
     game_started = true;
     score = 0;
@@ -253,11 +268,15 @@ function restartGame() {
     prev_target_height = 0;
     player_x = P_RIGHT;
     branches = [];
+    falling_branches = [];
     generate_first_branches();
 }
 
 function pop_push_new_branch() {
-    branches.pop();
+    let falling_branch = branches.pop();
+    falling_branch["velocity"] = 0;
+    falling_branch["alpha"] = 1;
+    falling_branches.push(falling_branch);
     branches.unshift(generate_branch());
 }
 
@@ -269,9 +288,12 @@ function update() {
             game_over = true;
         }
 
+        applyGravityToFallingBranches();
+
         // Aggiorna il valore massimo del timer
         max_timer = Math.max(HARD_MAX_TIMER - score * 0.02, 0.5);
         
+        //TODO check if this if condition then is needed
         if (prev_target_height <= 0) {
             // tree_y += prev_target_height;
             // // if (tree_y <= HEIGHT / 2) {
@@ -337,7 +359,16 @@ function draw() {
                 ctx.drawImage(sBranch, WIDTH / 2 + TREE_WIDTH / 2, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
             }
         });
-
+        // Draw falling branches
+        falling_branches.forEach(branch => {
+            ctx.globalAlpha = branch.alpha;
+            if (branch.side === "left") {
+                ctx.drawImage(sFlippedBranch, WIDTH / 2 - TREE_WIDTH / 2 - BRANCH_WIDTH, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
+            } else if (branch.side === "right") {
+                ctx.drawImage(sBranch, WIDTH / 2 + TREE_WIDTH / 2, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
+            }
+            ctx.globalAlpha = 1;
+        });
         // Disegna il giocatore
         if (player_x === P_LEFT) {
 			ctx.drawImage(manSprite, player_x - PLAYER_WIDTH / 2, player_y, PLAYER_WIDTH, PLAYER_HEIGHT);
