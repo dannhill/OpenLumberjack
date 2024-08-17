@@ -327,7 +327,18 @@ function draw() {
         ctx.textAlign = "center";
         ctx.fillText("Premi per iniziare", WIDTH / 2, HEIGHT / 2);
     } else if (game_over) {
+        /*
         ctx.fillStyle = BLACK;
+        ctx.textAlign = "center";
+        ctx.fillText("Game Over!", WIDTH / 2, HEIGHT / 2);
+        ctx.fillText(`Punteggio: ${score}`, WIDTH / 2, HEIGHT / 2 + 40);
+        ctx.fillText(`Record: ${max_score}`, WIDTH / 2, HEIGHT / 2 + 80);
+        ctx.fillText("Premi per ricominciare", WIDTH / 2, HEIGHT / 2 + 120);
+        */
+        draw_scene();
+        ctx.fillStyle = BRICK_RED_TRANSPARENT;
+        ctx.fillRect(0, 0, WIDTH, HEIGHT);
+        ctx.fillStyle = WHITE;
         ctx.textAlign = "center";
         ctx.fillText("Game Over!", WIDTH / 2, HEIGHT / 2);
         ctx.fillText(`Punteggio: ${score}`, WIDTH / 2, HEIGHT / 2 + 40);
@@ -339,45 +350,7 @@ function draw() {
         ctx.textAlign = "center";
         ctx.fillText("Pausa", WIDTH / 2, HEIGHT / 2);
     } else {
-        // Disegna lo sfondo
-        ctx.drawImage(background, 0, 0, WIDTH, HEIGHT);
-		const TREE_FRACTION = TREE_WIDTH / 3;
-        // Disegna l'albero TODO CHANGE THE FOLLOWING CODE TO DRAW A TRUNK THAT IS UNREADABLE
-		//upper tile(slightly larger than TREE_WIDTH cause image has a little bit of transparency)
-		ctx.drawImage(iTrunk, WIDTH / 2 - TREE_WIDTH / 2 - TREE_FRACTION, tree_y, TREE_WIDTH + TREE_FRACTION * 2, HEIGHT / 2);
-		//lower tile(slightly larger than TREE_WIDTH cause image has a little bit of transparency)
-		ctx.drawImage(iTrunk, WIDTH / 2 - TREE_WIDTH / 2 - TREE_FRACTION, tree_y + HEIGHT / 2, TREE_WIDTH + TREE_FRACTION * 2, HEIGHT / 2);
-        // extra trunk to cover the gap between the two tiles
-        ctx.drawImage(iTrunk, WIDTH / 2 - TREE_WIDTH / 2 - TREE_FRACTION, tree_y - HEIGHT / 2, TREE_WIDTH + TREE_FRACTION * 2, HEIGHT / 2);
-
-        // Disegna i rami
-        ctx.fillStyle = GREEN;
-        branches.forEach(branch => {
-            if (branch.side === "left") {
-                ctx.drawImage(sFlippedBranch, WIDTH / 2 - TREE_WIDTH / 2 - BRANCH_WIDTH, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
-            } else if (branch.side === "right") {
-                ctx.drawImage(sBranch, WIDTH / 2 + TREE_WIDTH / 2, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
-            }
-        });
-        // Draw falling branches
-        falling_branches.forEach(branch => {
-            ctx.globalAlpha = branch.alpha;
-            if (branch.side === "left") {
-                ctx.drawImage(sFlippedBranch, WIDTH / 2 - TREE_WIDTH / 2 - BRANCH_WIDTH, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
-            } else if (branch.side === "right") {
-                ctx.drawImage(sBranch, WIDTH / 2 + TREE_WIDTH / 2, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
-            }
-            ctx.globalAlpha = 1;
-        });
-        // Disegna il giocatore
-        if (player_x === P_LEFT) {
-			ctx.drawImage(manSprite, player_x - PLAYER_WIDTH / 2, player_y, PLAYER_WIDTH, PLAYER_HEIGHT);
-		}
-		else if (player_x === P_RIGHT) {
-			ctx.drawImage(flippedManSprite, player_x - PLAYER_WIDTH / 2, player_y, PLAYER_WIDTH, PLAYER_HEIGHT);
-		}
-		// ctx.fillStyle = RED;
-        // ctx.fillRect(player_x - PLAYER_WIDTH / 2, player_y, PLAYER_WIDTH, PLAYER_HEIGHT);
+        draw_scene();
 
         // Disegna il punteggio
         ctx.fillStyle = BRICK_RED;
@@ -403,6 +376,49 @@ function draw() {
         ctx.fillStyle = WHITE;
         ctx.fillText("Pausa", WIDTH - 54, 35);
     }
+}
+
+function draw_scene() {
+    // Disegna lo sfondo
+    ctx.drawImage(background, 0, 0, WIDTH, HEIGHT);
+    const TREE_FRACTION = TREE_WIDTH / 3;
+    // Disegna l'albero TODO CHANGE THE FOLLOWING CODE TO DRAW A TRUNK THAT IS UNREADABLE
+    //upper tile(slightly larger than TREE_WIDTH cause image has a little bit of transparency)
+    ctx.drawImage(iTrunk, WIDTH / 2 - TREE_WIDTH / 2 - TREE_FRACTION, tree_y, TREE_WIDTH + TREE_FRACTION * 2, HEIGHT / 2);
+    //lower tile(slightly larger than TREE_WIDTH cause image has a little bit of transparency)
+    ctx.drawImage(iTrunk, WIDTH / 2 - TREE_WIDTH / 2 - TREE_FRACTION, tree_y + HEIGHT / 2, TREE_WIDTH + TREE_FRACTION * 2, HEIGHT / 2);
+    // extra trunk to cover the gap between the two tiles
+    ctx.drawImage(iTrunk, WIDTH / 2 - TREE_WIDTH / 2 - TREE_FRACTION, tree_y - HEIGHT / 2, TREE_WIDTH + TREE_FRACTION * 2, HEIGHT / 2);
+
+    // Disegna i rami
+    ctx.fillStyle = GREEN;
+    branches.forEach(branch => {
+        if (branch.side === "left") {
+            ctx.drawImage(sFlippedBranch, WIDTH / 2 - TREE_WIDTH / 2 - BRANCH_WIDTH, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
+        } else if (branch.side === "right") {
+            ctx.drawImage(sBranch, WIDTH / 2 + TREE_WIDTH / 2, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
+        }
+    });
+    // Draw falling branches
+    falling_branches.forEach(branch => {
+        ctx.globalAlpha = branch.alpha;
+        if (branch.side === "left") {
+            ctx.drawImage(sFlippedBranch, WIDTH / 2 - TREE_WIDTH / 2 - BRANCH_WIDTH, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
+        } else if (branch.side === "right") {
+            ctx.drawImage(sBranch, WIDTH / 2 + TREE_WIDTH / 2, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
+        }
+        ctx.globalAlpha = 1;
+    });
+    // Disegna il giocatore
+    if (player_x === P_LEFT) {
+        ctx.drawImage(manSprite, player_x - PLAYER_WIDTH / 2, player_y, PLAYER_WIDTH, PLAYER_HEIGHT);
+    }
+    else if (player_x === P_RIGHT) {
+        ctx.drawImage(flippedManSprite, player_x - PLAYER_WIDTH / 2, player_y, PLAYER_WIDTH, PLAYER_HEIGHT);
+    }
+    // ctx.fillStyle = RED;
+    // ctx.fillRect(player_x - PLAYER_WIDTH / 2, player_y, PLAYER_WIDTH, PLAYER_HEIGHT);
+
 }
 
 generate_first_branches();
