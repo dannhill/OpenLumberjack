@@ -43,7 +43,6 @@ document.fonts.add(pixelFont);
 // Canvas
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-const FALLING_BRANCHES_TRANSPARENCY = 0.6;
 // Canvas dimensions
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
