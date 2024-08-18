@@ -95,6 +95,11 @@ let player_y = HEIGHT - PLAYER_HEIGHT;
 let branches = [];
 let falling_branches = [];
 
+
+//////////////////////////////////////////////////
+//! Input handling functions (Event listeners defined at the end of the file)
+//////////////////////////////////////////////////
+
 function handleKeyDown(event) {
     if (!game_started && !game_over && !game_paused) {
         if (event.code === 'Space') {
@@ -164,18 +169,10 @@ function handleMouseOver(event) {
     }
 }
 
-function generate_branch(type = null) {
-    const sides = ["left", "right", "none"];
-    const side = type ? type : sides[Math.floor(Math.random() * sides.length)];
-    return { side: side, y: -prev_target_height * 2 };
-}
 
-function generate_first_branches() {
-    for (let i = -1; i < NUM_BRANCHES - 1; i++) {
-        branches.push(generate_branch());
-        branches[branches.length - 1].y = (i + 0.5) * BRANCH_HEIGHT;
-    }
-}
+//////////////////////////////////////////////////
+//! Game states functions
+//////////////////////////////////////////////////
 
 function pauseGame() {
     game_paused = true;
@@ -189,65 +186,6 @@ function resumeGame() {
     game_started = true;
 
     pauseSound.play();
-}
-
-function movePlayer(direction) {
-    player_x = (direction === 'left' ? P_LEFT : direction === 'right' ? P_RIGHT : player_x);
-
-	if ((branches[branches.length - 1].side === "left" && direction === "left") ||
-		(branches[branches.length - 1].side === "right" && direction === "right")) {
-		game_over = true;
-	}
-	moveBranchesDown();
-    score++;
-
-    chopSound.cloneNode().play();
-
-	// Update record
-    if (max_score < score) {
-		max_score = score;
-	}
-
-    // Gestione tempo gioco
-    let inverseProportionalToTimer = max_timer / timer * 0.4; // valore compreso tra 1 e max_timer(per timer maggiore o uguale a 1), poi diviso per 2
-    let percentageInverseProportionalToTimer = inverseProportionalToTimer / max_timer; // percentuale compresa tra 0 e 1(per timer maggiore o uguale a 1)
-    addTime(percentageInverseProportionalToTimer);
-}
-
-function addTime(percentage) {
-    if (timer + percentage * max_timer >= max_timer) {
-        timer = max_timer;
-    }
-    else {
-        timer += percentage * max_timer;
-    }
-}
-// TODO fix this thing when prev_target_height is < 0. It is there the problem
-function moveBranchesDown() {
-    if (is_tree_sliding && prev_target_height != 0) {
-        // let modulo = branches[0].y % BRANCH_HEIGHT;
-        branches.forEach(branch => branch.y += prev_target_height);
-        tree_y += prev_target_height;
-        if (tree_y > HEIGHT / 2) {
-            tree_y -= HEIGHT / 2;
-        }
-    }
-    if (!is_tree_sliding && prev_target_height <= 0) {
-        is_tree_sliding = true;
-    }
-    prev_target_height = BRANCH_HEIGHT;
-    pop_push_new_branch();
-}
-
-function applyGravityToFallingBranches() {
-    falling_branches.forEach(function(branch) {
-        branch.y += delta / 1000 * branch.velocity;
-        branch.alpha -= delta / 1000 * FADING_BRANCH_SPEED;
-        branch.velocity += delta / 1000 * GRAVITY;
-        if (branch.y >= HEIGHT) {
-            falling_branches.splice(falling_branches.indexOf(branch), 1);
-        }
-    });
 }
 
 function startGame() {
@@ -271,6 +209,77 @@ function restartGame() {
     generate_first_branches();
 }
 
+
+//////////////////////////////////////////////////
+//! Controls Functions
+//////////////////////////////////////////////////
+
+function movePlayer(direction) {
+    player_x = (direction === 'left' ? P_LEFT : direction === 'right' ? P_RIGHT : player_x);
+
+	if ((branches[branches.length - 1].side === "left" && direction === "left") ||
+		(branches[branches.length - 1].side === "right" && direction === "right")) {
+		game_over = true;
+	}
+	moveBranchesDown();
+    score++;
+
+    chopSound.cloneNode().play();
+
+	// Update record
+    if (max_score < score) {
+		max_score = score;
+	}
+
+    // Game time management
+    let inverseProportionalToTimer = max_timer / timer * 0.4; // valore compreso tra 1 e max_timer(per timer maggiore o uguale a 1), poi diviso per 2
+    let percentageInverseProportionalToTimer = inverseProportionalToTimer / max_timer; // percentuale compresa tra 0 e 1(per timer maggiore o uguale a 1)
+    addTime(percentageInverseProportionalToTimer);
+}
+
+//////////////////////////////////////////////////
+//! Game Logic functions
+//////////////////////////////////////////////////
+
+function generate_branch(type = null) {
+    const sides = ["left", "right", "none"];
+    const side = type ? type : sides[Math.floor(Math.random() * sides.length)];
+    return { side: side, y: -prev_target_height * 2 };
+}
+
+function generate_first_branches() {
+    for (let i = -1; i < NUM_BRANCHES - 1; i++) {
+        branches.push(generate_branch());
+        branches[branches.length - 1].y = (i + 0.5) * BRANCH_HEIGHT;
+    }
+}
+
+function addTime(percentage) {
+    if (timer + percentage * max_timer >= max_timer) {
+        timer = max_timer;
+    }
+    else {
+        timer += percentage * max_timer;
+    }
+}
+
+// TODO fix this thing when prev_target_height is < 0. It is there the problem
+function moveBranchesDown() {
+    if (is_tree_sliding && prev_target_height != 0) {
+        // let modulo = branches[0].y % BRANCH_HEIGHT;
+        branches.forEach(branch => branch.y += prev_target_height);
+        tree_y += prev_target_height;
+        if (tree_y > HEIGHT / 2) {
+            tree_y -= HEIGHT / 2;
+        }
+    }
+    if (!is_tree_sliding && prev_target_height <= 0) {
+        is_tree_sliding = true;
+    }
+    prev_target_height = BRANCH_HEIGHT;
+    pop_push_new_branch();
+}
+
 function pop_push_new_branch() {
     let falling_branch = branches.pop();
     falling_branch["velocity"] = 0;
@@ -279,9 +288,26 @@ function pop_push_new_branch() {
     branches.unshift(generate_branch());
 }
 
+function applyGravityToFallingBranches() {
+    falling_branches.forEach(function(branch) {
+        branch.y += delta / 1000 * branch.velocity;
+        branch.alpha -= delta / 1000 * FADING_BRANCH_SPEED;
+        branch.velocity += delta / 1000 * GRAVITY;
+        if (branch.y >= HEIGHT) {
+            falling_branches.splice(falling_branches.indexOf(branch), 1);
+        }
+    });
+}
+
+
+
+//////////////////////////////////////////////////
+//! FPS calculation functions
+//////////////////////////////////////////////////
+
 function update() {
     if (game_started && !game_over) {
-        // Aggiorna il timer
+        // Updates the timer
         timer -=  delta / 1000;
         if (timer <= 0) {
             game_over = true;
@@ -289,7 +315,7 @@ function update() {
 
         applyGravityToFallingBranches();
 
-        // Aggiorna il valore massimo del timer
+        // Updates max timer value
         max_timer = Math.max(HARD_MAX_TIMER - score * 0.02, 0.5);
         
         //TODO check if this if condition then is needed
@@ -312,6 +338,10 @@ function update() {
         }
     }
 }
+
+//////////////////////////////////////////////////
+//! Drawing functions (drawing game scene and interface)
+//////////////////////////////////////////////////
 
 function draw() {
     ctx.canvas.width = WIDTH;
@@ -344,8 +374,10 @@ function draw() {
         ctx.fillText(`Record: ${max_score}`, WIDTH / 2, HEIGHT / 2 + 80);
         ctx.fillText("Premi per ricominciare", WIDTH / 2, HEIGHT / 2 + 120);
     } else if (game_paused) {
-        // TODO Cambiare questo schermo di pausa con una roba più carina
-        ctx.fillStyle = BLACK;
+        draw_scene();
+        ctx.fillStyle = BRICK_RED_TRANSPARENT;
+        ctx.fillRect(0, 0, WIDTH, HEIGHT);
+        ctx.fillStyle = WHITE;
         ctx.textAlign = "center";
         ctx.fillText("Pausa", WIDTH / 2, HEIGHT / 2);
     } else {
@@ -378,10 +410,12 @@ function draw() {
 }
 
 function draw_scene() {
-    // Disegna lo sfondo
+    // Draws background
     ctx.drawImage(background, 0, 0, WIDTH, HEIGHT);
     const TREE_FRACTION = TREE_WIDTH / 3;
-    // Disegna l'albero TODO CHANGE THE FOLLOWING CODE TO DRAW A TRUNK THAT IS UNREADABLE
+    
+    // Draws tree
+    // TODO CHANGE THE FOLLOWING CODE TO DRAW A TRUNK THAT IS UNREADABLE
     //upper tile(slightly larger than TREE_WIDTH cause image has a little bit of transparency)
     ctx.drawImage(iTrunk, WIDTH / 2 - TREE_WIDTH / 2 - TREE_FRACTION, tree_y, TREE_WIDTH + TREE_FRACTION * 2, HEIGHT / 2);
     //lower tile(slightly larger than TREE_WIDTH cause image has a little bit of transparency)
@@ -389,7 +423,7 @@ function draw_scene() {
     // extra trunk to cover the gap between the two tiles
     ctx.drawImage(iTrunk, WIDTH / 2 - TREE_WIDTH / 2 - TREE_FRACTION, tree_y - HEIGHT / 2, TREE_WIDTH + TREE_FRACTION * 2, HEIGHT / 2);
 
-    // Disegna i rami
+    // Draws branches
     ctx.fillStyle = GREEN;
     branches.forEach(branch => {
         if (branch.side === "left") {
@@ -398,7 +432,7 @@ function draw_scene() {
             ctx.drawImage(sBranch, WIDTH / 2 + TREE_WIDTH / 2, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
         }
     });
-    // Draw falling branches
+    // Draws falling branches
     falling_branches.forEach(branch => {
         ctx.globalAlpha = branch.alpha;
         if (branch.side === "left") {
@@ -408,7 +442,7 @@ function draw_scene() {
         }
         ctx.globalAlpha = 1;
     });
-    // Disegna il giocatore
+    // Draws player
     if (player_x === P_LEFT) {
         ctx.drawImage(manSprite, player_x - PLAYER_WIDTH / 2, player_y, PLAYER_WIDTH, PLAYER_HEIGHT);
     }
@@ -419,6 +453,11 @@ function draw_scene() {
     // ctx.fillRect(player_x - PLAYER_WIDTH / 2, player_y, PLAYER_WIDTH, PLAYER_HEIGHT);
 
 }
+
+
+//////////////////////////////////////////////////
+//! Main game flow 
+//////////////////////////////////////////////////
 
 generate_first_branches();
 
