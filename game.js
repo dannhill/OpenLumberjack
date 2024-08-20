@@ -99,7 +99,7 @@ let falling_branches = [];
 //////////////////////////////////////////////////
 //! Input handling functions (Event listeners defined at the end of the file)
 //////////////////////////////////////////////////
-
+//#region Input handling functions
 function handleKeyDown(event) {
     if (!game_started && !game_over && !game_paused) {
         if (event.code === 'Space') {
@@ -169,11 +169,11 @@ function handleMouseOver(event) {
     }
 }
 
-
+//#endregion
 //////////////////////////////////////////////////
 //! Game states functions
 //////////////////////////////////////////////////
-
+//#region Game states functions
 function pauseGame() {
     game_paused = true;
     game_started = false;
@@ -209,11 +209,11 @@ function restartGame() {
     generate_first_branches();
 }
 
-
+//#endregion
 //////////////////////////////////////////////////
 //! Controls Functions
 //////////////////////////////////////////////////
-
+//#region Controls Functions
 function movePlayer(direction) {
     player_x = (direction === 'left' ? P_LEFT : direction === 'right' ? P_RIGHT : player_x);
 
@@ -236,11 +236,11 @@ function movePlayer(direction) {
     let percentageInverseProportionalToTimer = inverseProportionalToTimer / max_timer; // percentuale compresa tra 0 e 1(per timer maggiore o uguale a 1)
     addTime(percentageInverseProportionalToTimer);
 }
-
+//#endregion
 //////////////////////////////////////////////////
 //! Game Logic functions
 //////////////////////////////////////////////////
-
+//#region Game Logic functions
 function generate_branch(type = null) {
     const sides = ["left", "right", "none"];
     const side = type ? type : sides[Math.floor(Math.random() * sides.length)];
@@ -298,13 +298,11 @@ function applyGravityToFallingBranches() {
         }
     });
 }
-
-
-
+//#endregion
 //////////////////////////////////////////////////
 //! FPS calculation functions
 //////////////////////////////////////////////////
-
+//#region FPS calculation functions
 function update() {
     if (game_started && !game_over) {
         // Updates the timer
@@ -338,11 +336,11 @@ function update() {
         }
     }
 }
-
+//#endregion
 //////////////////////////////////////////////////
 //! Drawing functions (drawing game scene and interface)
 //////////////////////////////////////////////////
-
+//#region Drawing functions
 function draw() {
     ctx.canvas.width = WIDTH;
     ctx.canvas.height = HEIGHT;
@@ -453,12 +451,11 @@ function draw_scene() {
     // ctx.fillRect(player_x - PLAYER_WIDTH / 2, player_y, PLAYER_WIDTH, PLAYER_HEIGHT);
 
 }
-
-
+//#endregion
 //////////////////////////////////////////////////
 //! Main game flow 
 //////////////////////////////////////////////////
-
+//#region Main game flow
 generate_first_branches();
 
 // Input handling
@@ -476,3 +473,4 @@ function gameLoop() {
 }
 
 gameLoop();
+//#endregion
