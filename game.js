@@ -44,8 +44,10 @@ document.fonts.add(pixelFont);
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 // Canvas dimensions
-const WIDTH = window.innerWidth;
-const HEIGHT = window.innerHeight;
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const WIDTH = canvas.width;
+const HEIGHT = canvas.height;
 // Player dimensions
 const PLAYER_HEIGHT = HEIGHT / 4;
 const PLAYER_WIDTH = PLAYER_HEIGHT * (383 / 521); //TODO hardcoded ratio, to be changed if using another image
