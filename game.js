@@ -44,8 +44,8 @@ document.fonts.add(pixelFont);
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 // Canvas dimensions
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = 608;
+canvas.height = 1080;
 const WIDTH = canvas.width;
 const HEIGHT = canvas.height;
 // Player dimensions
