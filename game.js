@@ -246,7 +246,7 @@ function movePlayer(direction) {
 function generate_branch(type = null) {
     const sides = ["left", "right", "none"];
     const side = type ? type : sides[Math.floor(Math.random() * sides.length)];
-    return { side: side, y: -prev_target_height * 2 };
+    return { side: side, y: -prev_target_height * 1.3 };
 }
 
 function generate_first_branches() {
