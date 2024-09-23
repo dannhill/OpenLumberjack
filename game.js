@@ -67,6 +67,7 @@ const P_RIGHT = WIDTH / 2 + TREE_WIDTH / 2 + PLAYER_WIDTH / 2
 const TREE_SLIDING_SPEED = 700; // pixels per second
 const GRAVITY = 400; // pixels per second squared
 const FADING_BRANCH_SPEED = 0.7; // alpha per second
+const AXE_IMPULSE = 100; // pixels per second
 // Pause button variables
 const PAUSE_BUTTON_X = WIDTH - 100;
 const PAUSE_BUTTON_Y = 10;
@@ -225,7 +226,7 @@ function movePlayer(direction) {
 	}
 	moveBranchesDown();
     score++;
-
+	applyImpulseToFallingBranches();
     chopSound.cloneNode().play();
 
 	// Update record
@@ -246,7 +247,14 @@ function movePlayer(direction) {
 function generate_branch(type = null) {
     const sides = ["left", "right", "none"];
     const side = type ? type : sides[Math.floor(Math.random() * sides.length)];
-    return { side: side, y: -prev_target_height };
+	let x_val;
+	if (side === "left") {
+		x_val = WIDTH / 2 - TREE_WIDTH / 2 - BRANCH_WIDTH;
+	}
+	else if (side === "right") {
+		x_val = WIDTH / 2 + TREE_WIDTH / 2;
+	}
+    return { side: side, y: -prev_target_height , x: x_val};
 }
 
 function generate_first_branches() {
@@ -290,9 +298,10 @@ function pop_push_new_branch() {
     branches.unshift(generate_branch());
 }
 
-function applyGravityToFallingBranches() {
+function computePhysicsFallingBranches() {
     falling_branches.forEach(function(branch) {
         branch.y += delta / 1000 * branch.velocity;
+		branch.x += delta / 1000 * branch.hvelocity;
         branch.alpha -= delta / 1000 * FADING_BRANCH_SPEED;
         branch.velocity += delta / 1000 * GRAVITY;
         if (branch.y >= HEIGHT) {
@@ -300,6 +309,17 @@ function applyGravityToFallingBranches() {
         }
     });
 }
+
+function applyImpulseToFallingBranches() {
+	falling_branches.forEach(function(branch) {
+		if (branch.side === "left") {
+			branch.hvelocity = -AXE_IMPULSE;
+		} else if (branch.side === "right") {
+			branch.hvelocity = AXE_IMPULSE;
+		}
+	});
+}
+
 //#endregion
 //////////////////////////////////////////////////
 //! FPS calculation functions
@@ -313,7 +333,7 @@ function update() {
             game_over = true;
         }
 
-        applyGravityToFallingBranches();
+        computePhysicsFallingBranches();
 
         // Updates max timer value
         max_timer = Math.max(HARD_MAX_TIMER - score * 0.02, 0.5);
@@ -427,18 +447,18 @@ function draw_scene() {
     ctx.fillStyle = GREEN;
     branches.forEach(branch => {
         if (branch.side === "left") {
-            ctx.drawImage(sFlippedBranch, WIDTH / 2 - TREE_WIDTH / 2 - BRANCH_WIDTH, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
+            ctx.drawImage(sFlippedBranch, branch.x, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
         } else if (branch.side === "right") {
-            ctx.drawImage(sBranch, WIDTH / 2 + TREE_WIDTH / 2, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
+            ctx.drawImage(sBranch, branch.x, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
         }
     });
     // Draws falling branches
     falling_branches.forEach(branch => {
         ctx.globalAlpha = branch.alpha;
         if (branch.side === "left") {
-            ctx.drawImage(sFlippedBranch, WIDTH / 2 - TREE_WIDTH / 2 - BRANCH_WIDTH, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
+            ctx.drawImage(sFlippedBranch, branch.x, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
         } else if (branch.side === "right") {
-            ctx.drawImage(sBranch, WIDTH / 2 + TREE_WIDTH / 2, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
+            ctx.drawImage(sBranch, branch.x, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
         }
         ctx.globalAlpha = 1;
     });
