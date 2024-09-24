@@ -68,6 +68,7 @@ const TREE_SLIDING_SPEED = 700; // pixels per second
 const GRAVITY = 400; // pixels per second squared
 const FADING_BRANCH_SPEED = 1; // alpha per second
 const AXE_IMPULSE = 200; // pixels per second
+const BRANCH_ANGULAR_VELOCITY = 0.5; // radians per second
 // Pause button variables
 const PAUSE_BUTTON_X = WIDTH - 100;
 const PAUSE_BUTTON_Y = 10;
@@ -254,7 +255,11 @@ function generate_branch(type = null) {
 	else if (side === "right") {
 		x_val = WIDTH / 2 + TREE_WIDTH / 2;
 	}
-    return { side: side, y: -prev_target_height , x: x_val};
+    return { side: side,
+		y: -prev_target_height , x: x_val,
+		angle: 0, angular_velocity: (Math.random() * BRANCH_ANGULAR_VELOCITY - BRANCH_ANGULAR_VELOCITY / 2),
+		velocity: 0, hvelocity: 0,
+		alpha: 1, };
 }
 
 function generate_first_branches() {
@@ -305,6 +310,7 @@ function computePhysicsFallingBranches() {
         branch.alpha -= delta / 1000 * FADING_BRANCH_SPEED;
 		branch.alpha = branch.alpha < 0 ? 0 : branch.alpha;
         branch.velocity += delta / 1000 * GRAVITY;
+		branch.angle += delta / 1000 * branch.angular_velocity;
         if (branch.y >= HEIGHT) {
             falling_branches.splice(falling_branches.indexOf(branch), 1);
         }
@@ -366,6 +372,16 @@ function update() {
 //! Drawing functions (drawing game scene and interface)
 //////////////////////////////////////////////////
 //#region Drawing functions
+// thanks to https://stackoverflow.com/questions/3793397/html5-canvas-drawimage-with-at-an-angle second answer
+// rotate 45º image "imgSprite", based on its rotation axis located at x=20,y=30 and draw it on context "ctx" of the canvas on coordinates x=200,y=100
+function rotateAndPaintImage ( context, image, angleInRad , positionX, positionY, width, height ) {
+	context.translate( positionX, positionY );
+	context.rotate( angleInRad );
+	context.drawImage( image, 0, 0, width, height);
+	context.rotate( -angleInRad );
+	context.translate( -positionX, -positionY );
+}
+
 function draw() {
     ctx.canvas.width = WIDTH;
     ctx.canvas.height = HEIGHT;
@@ -458,12 +474,17 @@ function draw_scene() {
     // Draws falling branches
     falling_branches.forEach(branch => {
         ctx.globalAlpha = branch.alpha;
+		// ctx.translate(WIDTH / 2, HEIGHT / 2);
+		// ctx.rotate(1.5);
         if (branch.side === "left") {
-            ctx.drawImage(sFlippedBranch, branch.x, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
+			rotateAndPaintImage( ctx, sFlippedBranch, branch.angle , branch.x, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
+            // ctx.drawImage(sFlippedBranch, branch.x, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
         } else if (branch.side === "right") {
-            ctx.drawImage(sBranch, branch.x, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT);
+			rotateAndPaintImage( ctx, sBranch, branch.angle , branch.x, branch.y, BRANCH_WIDTH, BRANCH_HEIGHT)
         }
         ctx.globalAlpha = 1;
+		// ctx.rotate(-1.5);
+		// ctx.translate(-WIDTH / 2, -HEIGHT / 2);
     });
     // Draws player
     if (player_x === P_LEFT) {
