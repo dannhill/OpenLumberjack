@@ -66,8 +66,8 @@ const P_RIGHT = WIDTH / 2 + TREE_WIDTH / 2 + PLAYER_WIDTH / 2
 // Physics
 const TREE_SLIDING_SPEED = 700; // pixels per second
 const GRAVITY = 400; // pixels per second squared
-const FADING_BRANCH_SPEED = 0.7; // alpha per second
-const AXE_IMPULSE = 100; // pixels per second
+const FADING_BRANCH_SPEED = 1; // alpha per second
+const AXE_IMPULSE = 200; // pixels per second
 // Pause button variables
 const PAUSE_BUTTON_X = WIDTH - 100;
 const PAUSE_BUTTON_Y = 10;
@@ -226,7 +226,7 @@ function movePlayer(direction) {
 	}
 	moveBranchesDown();
     score++;
-	applyImpulseToFallingBranches();
+	applyImpulseToLastFallingBranch();
     chopSound.cloneNode().play();
 
 	// Update record
@@ -303,6 +303,7 @@ function computePhysicsFallingBranches() {
         branch.y += delta / 1000 * branch.velocity;
 		branch.x += delta / 1000 * branch.hvelocity;
         branch.alpha -= delta / 1000 * FADING_BRANCH_SPEED;
+		branch.alpha = branch.alpha < 0 ? 0 : branch.alpha;
         branch.velocity += delta / 1000 * GRAVITY;
         if (branch.y >= HEIGHT) {
             falling_branches.splice(falling_branches.indexOf(branch), 1);
@@ -310,14 +311,16 @@ function computePhysicsFallingBranches() {
     });
 }
 
-function applyImpulseToFallingBranches() {
-	falling_branches.forEach(function(branch) {
-		if (branch.side === "left") {
-			branch.hvelocity = -AXE_IMPULSE;
-		} else if (branch.side === "right") {
-			branch.hvelocity = AXE_IMPULSE;
-		}
-	});
+function applyImpulseToLastFallingBranch() {
+	let last = falling_branches.length - 1;
+	let branch = falling_branches[last];
+	let abs_velocity = AXE_IMPULSE + (Math.random() * 200 - 100);//parentheses for readability
+
+	if (branch.side === "left") {
+		branch.hvelocity = -abs_velocity;
+	} else if (branch.side === "right") {
+		branch.hvelocity = abs_velocity;
+	}
 }
 
 //#endregion
